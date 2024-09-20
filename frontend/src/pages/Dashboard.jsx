@@ -1,4 +1,8 @@
-import { PlusIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import {
+    PlusIcon,
+    UserCircleIcon,
+    TrashIcon,
+} from "@heroicons/react/24/outline";
 import Button from "../components/Button";
 
 const notes = [
@@ -22,16 +26,15 @@ const Dashboard = () => {
             </h1>
 
             <div className="grid grid-cols-4 gap-4 mt-4 cursor-pointer h-auto">
-                {notes.map((svg, index) => (
+                {notes.map((note, index) => (
                     <div
                         key={index}
-                        className="bg-secondary-500 text-text-50 p-5 rounded-md"
+                        className="bg-secondary-500 text-text-50 p-5 rounded-md flex items-end justify-between"
                     >
-                        <svg
-                            width="100"
-                            height="100"
-                            viewBox="0 0 100 100"
-                        ></svg>
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            {/* Your SVG content here */}
+                        </svg>
+                        <TrashIcon className="w-6 h-6 text-text-950" />
                     </div>
                 ))}
             </div>
