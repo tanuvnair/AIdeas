@@ -1,1 +1,1 @@
-# ai-notes-app
+# AIdeas
