@@ -35,7 +35,7 @@ const Dashboard = () => {
                 {notes.map((note, index) => (
                     <div
                         key={index}
-                        className="bg-secondary-100 text-text-950 p-5 rounded-md flex items-center justify-between"
+                        className="bg-secondary-100 text-text-950 p-5 rounded-md flex items-center justify-between flex-wrap gap-6"
                         onClick={() => console.log("NAVIGATE TO NOTE USING")}
                     >
                         <h1 className="text-xl font-medium">{note.title}</h1>
