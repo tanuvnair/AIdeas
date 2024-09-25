@@ -6,7 +6,7 @@ import Note from "./pages/Note";
 
 function App() {
     return (
-        <div className="dark">
+        <div id="App" className="dark">
             <BrowserRouter>
                 <Routes>
                     <Route exact path="/" Component={Login} />

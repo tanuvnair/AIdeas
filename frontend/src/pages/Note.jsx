@@ -9,12 +9,22 @@ const Note = () => {
     const [selectedColor, setSelectedColor] = useState("#FF5733");
 
     useEffect(() => {
+        const appElement = document.getElementById("App");
+        let canvasBackground;
+        if (appElement) {
+            if (appElement.classList.contains("dark")) {
+                canvasBackground = "#000000";
+            } else {
+                canvasBackground = "#FFFFFF";
+            }
+        }
+
         const canvas = canvasRef.current;
 
         if (canvas) {
             const ctx = canvas.getContext("2d");
             if (ctx) {
-                canvas.style.background = "black";
+                canvas.style.background = canvasBackground;
                 canvas.width =
                     document.getElementById("canvasContainer").offsetWidth;
                 canvas.height =
@@ -75,6 +85,16 @@ const Note = () => {
         setSelectedColor(color);
     };
 
+    const resetCanvas = () => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+    };
+
     return (
         <div className="bg-background-50 h-screen rounded-none px-8 py-4">
             <div className="flex gap-4 items-center">
@@ -99,16 +119,24 @@ const Note = () => {
                 </div>
 
                 <div className="flex flex-col justify-between flex-wrap gap-4">
-                    <ColorSwatches
-                        className="flex flex-col gap-4"
-                        selectedColor={selectedColor}
-                        onSelectColor={handleColorChange}
-                    />
+                    <div className="flex flex-col gap-6">
+                        <ColorSwatches
+                            className="flex flex-col gap-4"
+                            selectedColor={selectedColor}
+                            onSelectColor={handleColorChange}
+                        />
+                    </div>
 
                     <div className="flex flex-col gap-2">
-                        <Button label={"Calculate"} />
-                        <Button label={"Save"} />
-                        <Button label={"Reset Canvas"} />
+                        <Button
+                            label={"Calculate"}
+                            onClick={() => console.log("CALCULATE")}
+                        />
+                        <Button
+                            label={"Save"}
+                            onClick={() => console.log("SAVE")}
+                        />
+                        <Button label={"Reset Canvas"} onClick={resetCanvas} />
                     </div>
                 </div>
             </div>
