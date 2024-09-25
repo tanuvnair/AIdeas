@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from "react";
 const Note = () => {
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
+    const [selectedColor, setSelectedColor] = useState("#FF5733");
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -59,7 +60,7 @@ const Note = () => {
         if (canvas) {
             const ctx = canvas.getContext("2d");
             if (ctx) {
-                ctx.strokeStyle = "white";
+                ctx.strokeStyle = selectedColor;
                 ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
                 ctx.stroke();
             }
@@ -68,6 +69,10 @@ const Note = () => {
 
     const stopDrawing = () => {
         setIsDrawing(false);
+    };
+
+    const handleColorChange = (color) => {
+        setSelectedColor(color);
     };
 
     return (
@@ -94,7 +99,11 @@ const Note = () => {
                 </div>
 
                 <div className="flex flex-col justify-between flex-wrap gap-4">
-                    <ColorSwatches className="flex flex-col gap-4" />
+                    <ColorSwatches
+                        className="flex flex-col gap-4"
+                        selectedColor={selectedColor}
+                        onSelectColor={handleColorChange}
+                    />
 
                     <div className="flex flex-col gap-2">
                         <Button label={"Calculate"} />
