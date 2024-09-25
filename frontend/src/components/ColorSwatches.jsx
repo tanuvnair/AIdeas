@@ -1,7 +1,18 @@
 import { FaEraser } from "react-icons/fa";
 
-const ColorSwatches = ({ className, selectedColor, onSelectColor }) => {
+const ColorSwatches = ({
+    className,
+    canvasBackgroundColor,
+    selectedColor,
+    onSelectColor,
+    onSelectEraser,
+}) => {
     const colors = ["#FF5733", "#33FF57", "#3357FF", "#F1C40F", "#9B59B6"];
+
+    const handleOnSelectEraser = () => {
+        onSelectColor(canvasBackgroundColor);
+        onSelectEraser();
+    };
 
     return (
         <div className={`${className}`}>
@@ -32,7 +43,7 @@ const ColorSwatches = ({ className, selectedColor, onSelectColor }) => {
                         ? "outline outline-4 outline-text-950"
                         : "outline-none"
                 }`}
-                onClick={() => onSelectColor("")}
+                onClick={handleOnSelectEraser}
             />
         </div>
     );

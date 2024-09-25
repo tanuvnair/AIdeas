@@ -5,20 +5,23 @@ import { useEffect, useState, useRef } from "react";
 
 const Note = () => {
     const canvasRef = useRef(null);
+    const [canvasBackground, setCanvasBackground] = useState("#FFFFFF");
     const [isDrawing, setIsDrawing] = useState(false);
+    const [isEraser, setIsEraser] = useState(false);
     const [selectedColor, setSelectedColor] = useState("#FF5733");
 
     useEffect(() => {
         const appElement = document.getElementById("App");
-        let canvasBackground;
         if (appElement) {
             if (appElement.classList.contains("dark")) {
-                canvasBackground = "#000000";
+                setCanvasBackground("#000000");
             } else {
-                canvasBackground = "#FFFFFF";
+                setCanvasBackground("#FFFFFF");
             }
         }
+    }, []);
 
+    useEffect(() => {
         const canvas = canvasRef.current;
 
         if (canvas) {
@@ -30,7 +33,7 @@ const Note = () => {
                 canvas.height =
                     document.getElementById("canvasContainer").offsetHeight;
                 ctx.lineCap = "round";
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 4;
             }
 
             // This basically stores the image date, then updates the canvas width and height to updated size, then puts the data back in the canvas
@@ -48,7 +51,7 @@ const Note = () => {
                 ctx.putImageData(imageData, 0, 0);
             });
         }
-    }, []);
+    }, [canvasBackground]);
 
     const startDrawing = (e) => {
         const canvas = canvasRef.current;
@@ -71,6 +74,7 @@ const Note = () => {
             const ctx = canvas.getContext("2d");
             if (ctx) {
                 ctx.strokeStyle = selectedColor;
+                ctx.lineWidth = isEraser ? 30 : 4;
                 ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
                 ctx.stroke();
             }
@@ -83,6 +87,11 @@ const Note = () => {
 
     const handleColorChange = (color) => {
         setSelectedColor(color);
+        setIsEraser(false);
+    };
+
+    const handleSelectEraser = () => {
+        setIsEraser(true);
     };
 
     const resetCanvas = () => {
@@ -122,8 +131,11 @@ const Note = () => {
                     <div className="flex flex-col gap-6">
                         <ColorSwatches
                             className="flex flex-col gap-4"
+                            canvasBackgroundColor={canvasBackground}
                             selectedColor={selectedColor}
                             onSelectColor={handleColorChange}
+                            onSelectEraser={handleSelectEraser}
+                            canvasBackground={canvasBackground}
                         />
                     </div>
 
