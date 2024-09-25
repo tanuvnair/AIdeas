@@ -2,6 +2,7 @@ import {
     PlusIcon,
     UserCircleIcon,
     TrashIcon,
+    PencilIcon,
 } from "@heroicons/react/24/outline";
 import Button from "../components/Button";
 
@@ -29,12 +30,13 @@ const Dashboard = () => {
                 {notes.map((note, index) => (
                     <div
                         key={index}
-                        className="bg-secondary-500 text-text-50 p-5 rounded-md flex items-end justify-between"
+                        className="bg-secondary-500 text-text-50 p-5 rounded-md flex items-end justify-between transition-all duration-200 hover:bg-secondary-400"
                     >
-                        <svg width="100" height="100" viewBox="0 0 100 100">
-                            {/* Your SVG content here */}
-                        </svg>
-                        <TrashIcon className="w-6 h-6 text-text-950" />
+                        <h1 className="text-l text-text-950">{note.title}</h1>
+                        <div className="flex gap-4">
+                            <PencilIcon className="w-6 text-text-950 transition-all duration-200 hover:text-text-800" />
+                            <TrashIcon className="w-6 text-text-950 transition-all duration-200 hover:text-text-800" />
+                        </div>
                     </div>
                 ))}
             </div>
