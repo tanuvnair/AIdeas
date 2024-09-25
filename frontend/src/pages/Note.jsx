@@ -10,8 +10,8 @@ const Note = () => {
                 <h1 className="text-text-950 text-4xl font-semibold">Note</h1>
             </div>
 
-            <div className="flex gap-6 mt-6 h-[calc(100%-8rem)]">
-                <div className="flex-grow border border-white">
+            <div className="flex gap-6 mt-5 h-[calc(100%-8rem)]">
+                <div className="flex-grow border-4 border-text-950">
                     <canvas className="w-full h-full" />
                 </div>
 

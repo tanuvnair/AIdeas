@@ -8,7 +8,6 @@ function App() {
     return (
         <div className="dark">
             <BrowserRouter>
-                {/* The switch ensures only one route is rendered at a time  */}
                 <Routes>
                     <Route exact path="/" Component={Login} />
                     <Route exact path="/signup" Component={Signup} />

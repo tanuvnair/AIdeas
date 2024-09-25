@@ -20,7 +20,7 @@ const ColorSwatches = ({ className }) => {
                     key={color}
                     className={`w-10 h-10 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110 ${
                         selectedColor === color
-                            ? "outline outline-2 outline-white"
+                            ? "outline outline-4 outline-text-950"
                             : "outline-none"
                     }`}
                     style={{ backgroundColor: color }}
