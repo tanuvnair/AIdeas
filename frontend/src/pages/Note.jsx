@@ -2,6 +2,7 @@ import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
 import Button from "../components/Button";
 import ColorSwatches from "../components/ColorSwatches";
 import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 const Note = () => {
     const canvasRef = useRef(null);
@@ -9,6 +10,44 @@ const Note = () => {
     const [isDrawing, setIsDrawing] = useState(false);
     const [isEraser, setIsEraser] = useState(false);
     const [selectedColor, setSelectedColor] = useState("#FF5733");
+    const [noteData, setNoteData] = useState({});
+
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchNote = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/");
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${import.meta.env.VITE_API_URL}/note/${id}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setNoteData(data);
+                } else {
+                    navigate("*");
+                }
+            } catch (err) {
+                console.log("ERROR: ", err);
+            }
+        };
+
+        fetchNote();
+    }, [id, navigate]);
 
     useEffect(() => {
         const appElement = document.getElementById("App");
@@ -108,7 +147,9 @@ const Note = () => {
         <div className="bg-background-50 h-screen rounded-none px-8 py-4">
             <div className="flex gap-4 items-center">
                 <ArrowLeftCircleIcon className="text-text-950 w-12 cursor-pointer" />
-                <h1 className="text-text-950 text-4xl font-semibold">Note</h1>
+                <h1 className="text-text-950 text-4xl font-semibold">
+                    {noteData.noteTitle}
+                </h1>
             </div>
 
             <div className="flex gap-6 mt-5 h-[calc(100%-8rem)]">

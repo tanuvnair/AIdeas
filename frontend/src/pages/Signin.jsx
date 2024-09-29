@@ -1,7 +1,7 @@
 import Textbox from "../components/Textbox";
 import Button from "../components/Button";
 import Toast from "../components/Toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Signin = () => {
@@ -29,8 +29,7 @@ const Signin = () => {
             localStorage.setItem("token", data.token);
             navigate("/dashboard");
         } else {
-            const errorData = await response.json();
-            showToastWithMessage(errorData.message || "An error occurred");
+            showToastWithMessage(data.message || "An error occurred");
         }
     };
 

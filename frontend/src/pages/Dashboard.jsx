@@ -16,6 +16,11 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchNotes = async () => {
             const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/");
+                return;
+            }
+
             const response = await fetch(
                 `${import.meta.env.VITE_API_URL}/note`,
                 {
