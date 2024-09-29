@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/notes", protect, noteRoutes);
+app.use("/api/note", protect, noteRoutes);
 
 // Make the port 5000 accessible and start the server
 const PORT = process.env.PORT || 5000;

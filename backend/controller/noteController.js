@@ -80,7 +80,7 @@ export const deleteNote = async (req, res) => {
             });
         }
 
-        res.status(204).send();
+        res.status(200).json({ message: "Note deleted" });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
