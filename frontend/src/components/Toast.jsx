@@ -9,7 +9,7 @@ const Toast = ({ message, onClose }) => {
     }, [onClose]);
 
     return (
-        <div className="px-16 py-8 fixed bottom-8 right-8 bg-red-600 text-white rounded-lg shadow-lg transition-opacity duration-300 ease-in-out">
+        <div className="px-12 py-6 fixed bottom-8 right-8 bg-red-600 text-white rounded-lg shadow-lg transition-opacity duration-300 ease-in-out">
             {message}
         </div>
     );
