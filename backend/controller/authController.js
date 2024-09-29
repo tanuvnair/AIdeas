@@ -1,14 +1,12 @@
-import User from "../models/userModel";
+import User from "../models/userModel.js";
 import bcrpyt from "bcryptjs";
-import jwt from "jwt";
+import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res) => {
-    const { email, password } = req.body;
-
     try {
+        const { email, password } = req.body;
         const userExists = await User.findOne({ email });
         if (userExists) {
-            // Returns 400 Bad Request
             return res.status(400).json({ message: "User already exists" });
         }
 
@@ -16,7 +14,6 @@ export const signUp = async (req, res) => {
         const newUser = new User({ email, password: hashedPassword });
         await newUser.save();
 
-        // Returns 201 Created
         res.status(201).json({ message: "User registered" });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -24,8 +21,8 @@ export const signUp = async (req, res) => {
 };
 
 export const signIn = async (req, res) => {
-    const { email, password } = req.body;
     try {
+        const { email, password } = req.body;
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: "User not found" });
@@ -37,7 +34,7 @@ export const signIn = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-            expiredIn: "1h",
+            expiresIn: "1h",
         });
 
         res.json({ token });
