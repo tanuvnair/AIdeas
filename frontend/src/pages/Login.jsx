@@ -18,7 +18,7 @@ const Login = () => {
                     {"Don't have an account? "}
                     <Link
                         className="text-accent-500 hover:text-accent-800"
-                        to={"/signup"}
+                        to={"/sign-up"}
                     >
                         Click here
                     </Link>

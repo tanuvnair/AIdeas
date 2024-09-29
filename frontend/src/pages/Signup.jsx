@@ -1,22 +1,69 @@
 import Textbox from "../components/Textbox";
 import Button from "../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import Toast from "../components/Toast"; // Import the Toast component
 
 const Signup = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [toastMessage, setToastMessage] = useState("");
+    const [showToast, setShowToast] = useState(false);
+    const navigate = useNavigate();
+
+    const handleSignUp = async (e) => {
+        e.preventDefault();
+        const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/auth/sign-up`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            }
+        );
+
+        if (response.ok) {
+            navigate("/");
+        } else {
+            const errorData = await response.json();
+            showToastWithMessage(errorData.message || "An error occurred");
+        }
+    };
+
+    const showToastWithMessage = (message) => {
+        setToastMessage(message);
+        setShowToast(true);
+    };
+
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
+
     return (
         <div className="flex justify-center items-center h-screen bg-background-50">
-            <div className="flex flex-col gap-6 w-1/3 bg-secondary-100 p-8 rounded-xl">
+            <form
+                onSubmit={handleSignUp}
+                className="flex flex-col gap-6 w-1/3 bg-secondary-100 p-8 rounded-xl"
+            >
                 <h1 className="text-4xl font-semibold text-text-950">
                     Sign Up
                 </h1>
-                <Textbox label={"Username"} placeholder={"Username"} />
-                <Textbox label={"Email"} placeholder={"Email"} type="email" />
+                <Textbox
+                    label={"Email"}
+                    placeholder={"Email"}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
                 <Textbox
                     label={"Password"}
                     placeholder={"Password"}
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
-
                 <p className="text-text-950">
                     {"Already have an account? "}
                     <Link
@@ -26,9 +73,12 @@ const Signup = () => {
                         Click here
                     </Link>
                 </p>
-
                 <Button label={"Sign Up"} />
-            </div>
+            </form>
+
+            {showToast && (
+                <Toast message={toastMessage} onClose={handleCloseToast} />
+            )}
         </div>
     );
 };
