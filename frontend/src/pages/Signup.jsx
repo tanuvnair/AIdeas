@@ -1,8 +1,8 @@
 import Textbox from "../components/Textbox";
 import Button from "../components/Button";
+import Toast from "../components/Toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Toast from "../components/Toast"; // Import the Toast component
 
 const Signup = () => {
     const [email, setEmail] = useState("");
