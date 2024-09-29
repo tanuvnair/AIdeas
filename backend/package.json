@@ -10,5 +10,10 @@
         "dev": "nodemon app.js"
     },
     "author": "Tanuv Nair",
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^16.4.5",
+        "express": "^4.21.0",
+        "mongoose": "^8.7.0"
+    }
 }
