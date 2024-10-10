@@ -3,8 +3,10 @@ import Button from "../components/Button";
 import ColorSwatches from "../components/ColorSwatches";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { verifyToken } from "../utils/utility";
 
 const Note = () => {
+    const token = localStorage.getItem("token");
     const canvasRef = useRef(null);
     const [canvasBackground, setCanvasBackground] = useState("#FFFFFF");
     const [isDrawing, setIsDrawing] = useState(false);
@@ -15,39 +17,45 @@ const Note = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const fetchNote = async () => {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_URL}/note/${id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setNoteData(data);
+            } else {
+                navigate("*");
+            }
+        } catch (err) {
+            console.log("ERROR: ", err);
+        }
+    };
+
     useEffect(() => {
-        const fetchNote = async () => {
-            const token = localStorage.getItem("token");
+        const initializeNote = async () => {
             if (!token) {
                 navigate("/");
                 return;
             }
 
-            try {
-                const response = await fetch(
-                    `${import.meta.env.VITE_API_URL}/note/${id}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setNoteData(data);
-                } else {
-                    navigate("*");
-                }
-            } catch (err) {
-                console.log("ERROR: ", err);
+            const isTokenValid = await verifyToken(token);
+            if (isTokenValid) {
+                fetchNote();
             }
         };
 
-        fetchNote();
-    }, [id, navigate]);
+        initializeNote();
+    }, []);
 
     useEffect(() => {
         const appElement = document.getElementById("App");

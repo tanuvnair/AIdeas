@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { verifyToken } from "../utils/utility.js";
 import Button from "../components/Button";
 import {
     PlusIcon,
@@ -9,18 +10,13 @@ import {
 } from "@heroicons/react/24/outline";
 
 const Dashboard = () => {
+    const token = localStorage.getItem("token");
     const [notes, setNotes] = useState([]);
-    const [showDropdown, setShowDropdown] = useState(false); // State to toggle the dropdown
-    const navigate = useNavigate(); // For navigation
+    const [showDropdown, setShowDropdown] = useState(false);
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchNotes = async () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                navigate("/");
-                return;
-            }
-
+    const fetchNotes = async () => {
+        try {
             const response = await fetch(
                 `${import.meta.env.VITE_API_URL}/note`,
                 {
@@ -35,10 +31,28 @@ const Dashboard = () => {
             if (response.ok) {
                 const data = await response.json();
                 setNotes(data);
+            } else {
+                console.error("Failed to fetch notes");
+            }
+        } catch (error) {
+            console.error("Error fetching notes:", error);
+        }
+    };
+
+    useEffect(() => {
+        const initializeDashboard = async () => {
+            if (!token) {
+                navigate("/");
+                return;
+            }
+
+            const isTokenValid = await verifyToken(token);
+            if (isTokenValid) {
+                fetchNotes();
             }
         };
 
-        fetchNotes();
+        initializeDashboard();
     }, []);
 
     const handleSignOut = () => {

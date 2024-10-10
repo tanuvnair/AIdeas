@@ -1,7 +1,7 @@
 import Textbox from "../components/Textbox";
 import Button from "../components/Button";
 import Toast from "../components/Toast";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Signin = () => {

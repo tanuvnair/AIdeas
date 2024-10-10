@@ -15,15 +15,12 @@ const app = express();
 
 // Middleware to parse JSON
 app.use(express.json());
-app.use(
-    cors({
-        origin: "http://localhost:5173",
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true,
-    })
-);
+app.use(cors());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/auth/verify-token", protect, (req, res) => {
+    res.status(200).json({ message: "Token is valid", user: req.user });
+});
 app.use("/api/note", protect, noteRoutes);
 
 // Make the port 5000 accessible and start the server

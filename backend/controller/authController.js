@@ -9,10 +9,10 @@ export const signUp = async (req, res) => {
         if (userExists) {
             return res.status(400).json({ message: "User already exists" });
         }
-        if (!password) {
+        if (!email || !password) {
             return res
                 .status(400)
-                .json({ message: "The password cannot be empty" });
+                .json({ message: "Credentials cannot be empty" });
         }
 
         const hashedPassword = await bcrpyt.hash(password, 10);
@@ -29,6 +29,12 @@ export const signIn = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
+
+        if (!email || !password) {
+            return res
+                .status(400)
+                .json({ message: "Credentials cannot be empty" });
+        }
         if (!user) {
             return res.status(400).json({ message: "User not found" });
         }
