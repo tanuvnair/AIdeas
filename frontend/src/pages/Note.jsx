@@ -1,9 +1,10 @@
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
-import Button from "../components/Button";
-import ColorSwatches from "../components/ColorSwatches";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { verifyToken } from "../utils/utility";
+import ColorSwatches from "../components/ColorSwatches"; // Keep your custom component for color selection
 
 const Note = () => {
     const token = localStorage.getItem("token");
@@ -83,7 +84,6 @@ const Note = () => {
                 ctx.lineWidth = 4;
             }
 
-            // This basically stores the image date, then updates the canvas width and height to updated size, then puts the data back in the canvas
             window.addEventListener("resize", () => {
                 const imageData = ctx.getImageData(
                     0,
@@ -107,7 +107,6 @@ const Note = () => {
             if (ctx) {
                 setIsDrawing(true);
                 ctx.beginPath();
-                // Moves the starting position of the brush to the mouse position
                 ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
             }
         }
@@ -152,19 +151,20 @@ const Note = () => {
     };
 
     return (
-        <div className="bg-background-50 h-screen rounded-none px-8 py-4">
+        <div className="p-4">
             <div className="flex gap-4 items-center">
-                <ArrowLeftCircleIcon className="text-text-950 w-12 cursor-pointer" />
+                <Button
+                    icon={<ArrowLeftCircleIcon />}
+                    className="p-button-text"
+                    onClick={() => navigate(-1)}
+                />
                 <h1 className="text-text-950 text-4xl font-semibold">
                     {noteData.noteTitle}
                 </h1>
             </div>
 
             <div className="flex gap-6 mt-5 h-[calc(100%-8rem)]">
-                <div
-                    id="canvasContainer"
-                    className="flex-grow border-4 border-text-950"
-                >
+                <div id="canvasContainer" className="">
                     <canvas
                         ref={canvasRef}
                         id="noteCanvas"
@@ -177,27 +177,12 @@ const Note = () => {
                 </div>
 
                 <div className="flex flex-col justify-between flex-wrap gap-4">
-                    <div className="flex flex-col gap-6">
-                        <ColorSwatches
-                            className="flex flex-col gap-4"
-                            canvasBackgroundColor={canvasBackground}
-                            selectedColor={selectedColor}
-                            onSelectColor={handleColorChange}
-                            onSelectEraser={handleSelectEraser}
-                            canvasBackground={canvasBackground}
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
+                    <div>
                         <Button
-                            label={"Calculate"}
-                            onClick={() => console.log("CALCULATE")}
-                        />
-                        <Button
-                            label={"Save"}
+                            label="Save"
                             onClick={() => console.log("SAVE")}
                         />
-                        <Button label={"Reset Canvas"} onClick={resetCanvas} />
+                        <Button label="Reset Canvas" onClick={resetCanvas} />
                     </div>
                 </div>
             </div>

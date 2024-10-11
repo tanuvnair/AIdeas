@@ -286,7 +286,12 @@ const Dashboard = () => {
                                     autoFocus
                                 />
                             ) : (
-                                <h1 className="text-2xl font-medium cursor-pointer">
+                                <h1
+                                    className="text-2xl font-medium cursor-pointer"
+                                    onClick={() => {
+                                        navigate(`/note/${note._id}`);
+                                    }}
+                                >
                                     {note.noteTitle}
                                 </h1>
                             )}
