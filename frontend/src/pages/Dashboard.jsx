@@ -56,7 +56,9 @@ const Dashboard = () => {
         navigate("/");
     };
 
-    const handleCreateNote = () => {};
+    const handleCreateNote = () => {
+        
+    };
 
     return (
         <div className="px-8">

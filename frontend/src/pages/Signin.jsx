@@ -1,3 +1,5 @@
+import axios from "axios";
+
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -13,33 +15,63 @@ const SignIn = () => {
     const toast = useRef(null);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [emailError, setEmailError] = useState("");
     const navigate = useNavigate();
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
     const handleSignIn = async (e) => {
         e.preventDefault();
-        const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/auth/sign-in`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            }
-        );
 
-        const data = await response.json();
-        if (response.ok) {
-            localStorage.setItem("token", data.token);
-            navigate("/dashboard");
+        if (!validateEmail(email)) {
+            setEmailError("Please enter a valid email address.");
+            return;
         } else {
-            toast.current.show({
-                severity: "error",
-                summary: "Error",
-                detail: data.message,
-                life: 3000,
-            });
+            setEmailError("");
         }
+
+        axios
+            .post(
+                `${import.meta.env.VITE_API_URL}/auth/sign-in`,
+                {
+                    email: email,
+                    password: password,
+                },
+                {
+                    headers: {
+                        Authorization: "Bearer token",
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+            .then((response) => {
+                localStorage.setItem("token", response.data.token);
+                navigate("/dashboard");
+            })
+            .catch((error) => {
+                let errorMessage = "An error occurred.";
+
+                if (error.response) {
+                    errorMessage =
+                        error.response.data.message ||
+                        `Error: ${error.response.status}`;
+                } else if (error.request) {
+                    errorMessage =
+                        "No response from the server. Please try again later.";
+                } else {
+                    errorMessage = error.message;
+                }
+
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: errorMessage,
+                    life: 3000,
+                });
+            });
     };
 
     useEffect(() => {
@@ -52,6 +84,8 @@ const SignIn = () => {
             const isTokenValid = await verifyToken(token);
             if (isTokenValid) {
                 navigate("/dashboard");
+            } else {
+                navigate("/");
             }
         };
 
@@ -64,11 +98,12 @@ const SignIn = () => {
                 <h1 className="text-6xl">Sign In</h1>
                 <label htmlFor="email">Email</label>
                 <InputText
-                    id="Email"
+                    id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
                 />
+                {emailError && <small className="p-error">{emailError}</small>}
 
                 <label htmlFor="password">Password</label>
                 <Password

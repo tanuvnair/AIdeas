@@ -6,38 +6,82 @@ import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Dialog } from "primereact/dialog";
+import axios from "axios";
 
 const SignUp = () => {
     const toast = useRef(null);
     const [successDialog, setSuccessDialog] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
     const navigate = useNavigate();
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validatePassword = (password) => {
+        const passwordRegex = /^.{8,}$/;
+        return passwordRegex.test(password);
+    };
 
     const handleSignUp = async (e) => {
         e.preventDefault();
-        const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/auth/sign-up`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            }
-        );
 
-        if (response.ok) {
-            setSuccessDialog(true);
+        if (!validateEmail(email)) {
+            setEmailError("Please enter a valid email address.");
+            return;
         } else {
-            const errorData = await response.json();
-            toast.current.show({
-                severity: "error",
-                summary: "Error",
-                detail: errorData.message || "An error occurred",
-                life: 3000,
-            });
+            setEmailError("");
         }
+
+        if (!validatePassword(password)) {
+            setPasswordError("Password must be at least 8 characters long.");
+            return;
+        } else {
+            setPasswordError("");
+        }
+
+        axios
+            .post(
+                `${import.meta.env.VITE_API_URL}/auth/sign-up`,
+                {
+                    email: email,
+                    password: password,
+                },
+                {
+                    headers: {
+                        Authorization: "Bearer token",
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+            .then(() => {
+                setSuccessDialog(true);
+            })
+            .catch((error) => {
+                let errorMessage = "An error occurred.";
+
+                if (error.response) {
+                    errorMessage =
+                        error.response.data.message ||
+                        `Error: ${error.response.status}`;
+                } else if (error.request) {
+                    errorMessage =
+                        "No response from the server. Please try again later.";
+                } else {
+                    errorMessage = error.message;
+                }
+
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: errorMessage,
+                    life: 3000,
+                });
+            });
     };
 
     const successDialogFooter = (
@@ -55,13 +99,15 @@ const SignUp = () => {
         <div className="flex justify-content-center align-items-center h-screen">
             <form onSubmit={handleSignUp} className="flex flex-column gap-3">
                 <h1 className="text-6xl">Sign Up</h1>
+
                 <label htmlFor="email">Email</label>
                 <InputText
-                    id="Email"
+                    id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
                 />
+                {emailError && <small className="p-error">{emailError}</small>}
 
                 <label htmlFor="password">Password</label>
                 <Password
@@ -71,6 +117,9 @@ const SignUp = () => {
                     feedback={false}
                     toggleMask
                 />
+                {passwordError && (
+                    <small className="p-error">{passwordError}</small>
+                )}
 
                 <p>
                     {"Already have an account? "}
