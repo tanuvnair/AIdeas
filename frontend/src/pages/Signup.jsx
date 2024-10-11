@@ -1,14 +1,17 @@
-import Textbox from "../components/Textbox";
-import Button from "../components/Button";
-import Toast from "../components/Toast";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
 
-const Signup = () => {
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import { Dialog } from "primereact/dialog";
+
+const SignUp = () => {
+    const toast = useRef(null);
+    const [successDialog, setSuccessDialog] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [toastMessage, setToastMessage] = useState("");
-    const [showToast, setShowToast] = useState(false);
     const navigate = useNavigate();
 
     const handleSignUp = async (e) => {
@@ -25,62 +28,70 @@ const Signup = () => {
         );
 
         if (response.ok) {
-            navigate("/");
+            setSuccessDialog(true);
         } else {
             const errorData = await response.json();
-            showToastWithMessage(errorData.message || "An error occurred");
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: errorData.message || "An error occurred",
+                life: 3000,
+            });
         }
     };
 
-    const showToastWithMessage = (message) => {
-        setToastMessage(message);
-        setShowToast(true);
-    };
-
-    const handleCloseToast = () => {
-        setShowToast(false);
-    };
+    const successDialogFooter = (
+        <div>
+            <Button
+                label="Ok"
+                icon="pi pi-check"
+                onClick={() => navigate("/")}
+                autoFocus
+            />
+        </div>
+    );
 
     return (
-        <div className="flex justify-center items-center h-screen bg-background-50">
-            <form
-                onSubmit={handleSignUp}
-                className="flex flex-col gap-6 w-1/3 bg-secondary-100 p-8 rounded-xl"
-            >
-                <h1 className="text-4xl font-semibold text-text-950">
-                    Sign Up
-                </h1>
-                <Textbox
-                    label={"Email"}
-                    placeholder={"Email"}
-                    type="email"
+        <div className="flex justify-content-center align-items-center h-screen">
+            <form onSubmit={handleSignUp} className="flex flex-column gap-3">
+                <h1 className="text-6xl">Sign Up</h1>
+                <label htmlFor="email">Email</label>
+                <InputText
+                    id="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    type="email"
                 />
-                <Textbox
-                    label={"Password"}
-                    placeholder={"Password"}
-                    type="password"
+
+                <label htmlFor="password">Password</label>
+                <Password
+                    id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    feedback={false}
+                    toggleMask
                 />
-                <p className="text-text-950">
+
+                <p>
                     {"Already have an account? "}
-                    <Link
-                        className="text-accent-500 hover:text-accent-800"
-                        to={"/"}
-                    >
-                        Click here
-                    </Link>
+                    <Link to={"/"}>Click here</Link>
                 </p>
-                <Button label={"Sign Up"} />
+                <Button label={"Sign Up"} onClick={handleSignUp} />
             </form>
 
-            {showToast && (
-                <Toast message={toastMessage} onClose={handleCloseToast} />
-            )}
+            <Toast ref={toast} position="bottom-right" />
+            <Dialog
+                header="Your account has been successfully created"
+                visible={successDialog}
+                footer={successDialogFooter}
+                style={{ width: "25vw" }}
+                onHide={() => {
+                    if (!successDialog) return;
+                    setSuccessDialog(false);
+                }}
+            ></Dialog>
         </div>
     );
 };
 
-export default Signup;
+export default SignUp;
