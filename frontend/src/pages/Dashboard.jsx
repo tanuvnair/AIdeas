@@ -10,6 +10,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
 const Dashboard = () => {
     const token = localStorage.getItem("token");
@@ -94,8 +95,8 @@ const Dashboard = () => {
             .then(() => {
                 toast.current.show({
                     severity: "success",
-                    summary: "Confirmed",
-                    detail: "New note created",
+                    summary: "Created note",
+                    detail: "New note has been created",
                     life: 3000,
                 });
             })
@@ -124,6 +125,59 @@ const Dashboard = () => {
         await fetchNotes();
     };
 
+    const handleDeleteNote = (note) => {
+        console.log(note);
+
+        const accept = async () => {
+            await axios
+                .delete(`${import.meta.env.VITE_API_URL}/note/${note._id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then(() => {
+                    toast.current.show({
+                        severity: "error",
+                        summary: "Deleted note",
+                        detail: `The note "${note.noteTitle}" has been deleted`,
+                        life: 3000,
+                    });
+                })
+                .catch((error) => {
+                    let errorMessage = "An error occurred.";
+
+                    if (error.response) {
+                        errorMessage =
+                            error.response.data.message ||
+                            `Error: ${error.response.status}`;
+                    } else if (error.request) {
+                        errorMessage =
+                            "No response from the server. Please try again later.";
+                    } else {
+                        errorMessage = error.message;
+                    }
+
+                    toast.current.show({
+                        severity: "error",
+                        summary: "Error",
+                        detail: errorMessage,
+                        life: 3000,
+                    });
+                });
+
+            await fetchNotes();
+        };
+
+        confirmDialog({
+            message: "Do you want to delete this note?",
+            header: "Delete Note",
+            icon: "pi pi-info-circle",
+            acceptClassName: "p-button-danger",
+            accept,
+        });
+    };
+
     const noteCreationDialogHeader = (
         <div>
             <h1>Note name</h1>
@@ -140,12 +194,6 @@ const Dashboard = () => {
             <Button label="Create Note" onClick={handleCreateNote} autoFocus />
         </div>
     );
-
-    const createNote = () => {
-        console.log("Create note");
-
-        setNoteCreationDialog(true);
-    };
 
     return (
         <div className="px-8">
@@ -181,7 +229,7 @@ const Dashboard = () => {
                                 />
                                 <Button
                                     icon="pi pi-trash"
-                                    onClick={() => console.log("DELETE")}
+                                    onClick={() => handleDeleteNote(note)}
                                     className="p-button-text"
                                 />
                             </div>
@@ -193,7 +241,7 @@ const Dashboard = () => {
             <Button
                 icon="pi pi-plus"
                 className="absolute bottom-0 right-0 mb-6 mr-6 w-1 "
-                onClick={createNote}
+                onClick={() => setNoteCreationDialog(true)}
             />
 
             <Dialog
@@ -207,6 +255,7 @@ const Dashboard = () => {
                     setNoteCreationDialog(false);
                 }}
             />
+            <ConfirmDialog />
             <Toast ref={toast} position="top-right" />
         </div>
     );
