@@ -19,10 +19,9 @@ const Note = () => {
 
     const fetchNote = async () => {
         try {
-            const response = await fetch(
+            const response = await axios.get(
                 `${import.meta.env.VITE_API_URL}/note/${id}`,
                 {
-                    method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json",
@@ -30,15 +29,11 @@ const Note = () => {
                 }
             );
 
-            if (response.ok) {
-                const data = await response.json();
-                setNoteData(data);
-                handleLoad(data); // Load the note image after fetching data
-            } else {
-                navigate("*");
-            }
+            setNoteData(response.data);
+            handleLoad(response.data);
         } catch (err) {
             console.log("ERROR: ", err);
+            navigate("*");
         }
     };
 
