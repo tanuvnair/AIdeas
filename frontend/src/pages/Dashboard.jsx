@@ -17,6 +17,8 @@ const Dashboard = () => {
     const toast = useRef(null);
     const [notes, setNotes] = useState([]);
     const [noteCreationDialog, setNoteCreationDialog] = useState(false);
+    const [editingNoteId, setEditingNoteId] = useState(null);
+    const [editedNoteTitle, setEditedNoteTitle] = useState("");
     const [noteTitle, setNoteTitle] = useState("");
     const navigate = useNavigate();
 
@@ -125,9 +127,77 @@ const Dashboard = () => {
         await fetchNotes();
     };
 
-    const handleDeleteNote = (note) => {
-        console.log(note);
+    const noteCreationDialogHeader = (
+        <div>
+            <h1>Note name</h1>
+            <InputText
+                id="noteName"
+                className="w-full"
+                onChange={(e) => setNoteTitle(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key == "Enter") {
+                        handleCreateNote();
+                    }
+                }}
+                autoFocus
+            />
+        </div>
+    );
 
+    const noteCreationDialogFooter = (
+        <div>
+            <Button label="Create Note" onClick={handleCreateNote} />
+        </div>
+    );
+
+    const handleEditNote = async (note) => {
+        if (editedNoteTitle !== note.noteTitle) {
+            await axios
+                .put(
+                    `${import.meta.env.VITE_API_URL}/note/${note._id}`,
+                    { noteTitle: editedNoteTitle },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                )
+                .then(() => {
+                    toast.current.show({
+                        severity: "success",
+                        summary: "Updated note",
+                        detail: "The note has been updated",
+                        life: 3000,
+                    });
+                })
+                .catch((error) => {
+                    let errorMessage = "An error occurred.";
+
+                    if (error.response) {
+                        errorMessage =
+                            error.response.data.message ||
+                            `Error: ${error.response.status}`;
+                    } else if (error.request) {
+                        errorMessage =
+                            "No response from the server. Please try again later.";
+                    } else {
+                        errorMessage = error.message;
+                    }
+
+                    toast.current.show({
+                        severity: "error",
+                        summary: "Error",
+                        detail: errorMessage,
+                        life: 3000,
+                    });
+                });
+        }
+        setEditingNoteId(null);
+        await fetchNotes();
+    };
+
+    const handleDeleteNote = (note) => {
         const accept = async () => {
             await axios
                 .delete(`${import.meta.env.VITE_API_URL}/note/${note._id}`, {
@@ -178,23 +248,6 @@ const Dashboard = () => {
         });
     };
 
-    const noteCreationDialogHeader = (
-        <div>
-            <h1>Note name</h1>
-            <InputText
-                id="noteName"
-                className="w-full"
-                onChange={(e) => setNoteTitle(e.target.value)}
-            />
-        </div>
-    );
-
-    const noteCreationDialogFooter = (
-        <div>
-            <Button label="Create Note" onClick={handleCreateNote} autoFocus />
-        </div>
-    );
-
     return (
         <div className="px-8">
             <div className="flex justify-content-between align-items-center relative">
@@ -218,13 +271,33 @@ const Dashboard = () => {
                         key={note.id || index}
                     >
                         <Card className="flex flex-auto justify-content-start relative">
-                            <h1 className="text-2xl font-medium cursor-pointer">
-                                {note.noteTitle}
-                            </h1>
+                            {editingNoteId === note._id ? (
+                                <InputText
+                                    value={editedNoteTitle}
+                                    onChange={(e) =>
+                                        setEditedNoteTitle(e.target.value)
+                                    }
+                                    onBlur={() => handleEditNote(note)}
+                                    onKeyDown={(e) => {
+                                        if (e.key == "Enter") {
+                                            handleEditNote(note);
+                                        }
+                                    }}
+                                    autoFocus
+                                />
+                            ) : (
+                                <h1 className="text-2xl font-medium cursor-pointer">
+                                    {note.noteTitle}
+                                </h1>
+                            )}
+
                             <div className="flex gap-2 absolute bottom-0 right-0 mb-3 mr-3">
                                 <Button
                                     icon="pi pi-pencil"
-                                    onClick={() => console.log("EDIT")}
+                                    onClick={() => {
+                                        setEditingNoteId(note._id);
+                                        setEditedNoteTitle(note.noteTitle);
+                                    }}
                                     className="p-button-text"
                                 />
                                 <Button
