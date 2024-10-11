@@ -1,16 +1,18 @@
+import axios from "axios";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
 import { Button } from "primereact/button";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { verifyToken } from "../utils/utility";
 
+import { Toast } from "primereact/toast";
+
 const Note = () => {
     const token = localStorage.getItem("token");
+    const toast = useRef(null);
     const canvasRef = useRef(null);
     const [canvasBackground] = useState("#000000");
     const [isDrawing, setIsDrawing] = useState(false);
-    const [isEraser, setIsEraser] = useState(false);
-    const [selectedColor, setSelectedColor] = useState("#FF5733");
     const [noteData, setNoteData] = useState({});
 
     const { id } = useParams();
@@ -106,8 +108,8 @@ const Note = () => {
         if (canvas) {
             const ctx = canvas.getContext("2d");
             if (ctx) {
-                ctx.strokeStyle = selectedColor;
-                ctx.lineWidth = isEraser ? 30 : 4;
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 4;
                 ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
                 ctx.stroke();
             }
@@ -118,15 +120,6 @@ const Note = () => {
         setIsDrawing(false);
     };
 
-    const handleColorChange = (color) => {
-        setSelectedColor(color);
-        setIsEraser(false);
-    };
-
-    const handleSelectEraser = () => {
-        setIsEraser(true);
-    };
-
     const resetCanvas = () => {
         const canvas = canvasRef.current;
         if (canvas) {
@@ -134,6 +127,115 @@ const Note = () => {
             if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
+        }
+    };
+
+    const handleSave = async () => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const dataURL = canvas.toDataURL("image/png");
+
+            try {
+                await axios.put(
+                    `${import.meta.env.VITE_API_URL}/note/${noteData._id}`,
+                    { imageData: dataURL },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                setNoteData((prevNoteData) => ({
+                    ...prevNoteData,
+                    imageData: dataURL,
+                }));
+
+                toast.current.show({
+                    severity: "success",
+                    summary: "Saved note",
+                    detail: "The note has been saved",
+                    life: 3000,
+                });
+            } catch (error) {
+                let errorMessage = "An error occurred.";
+                if (error.response) {
+                    errorMessage =
+                        error.response.data.message ||
+                        `Error: ${error.response.status}`;
+                } else if (error.request) {
+                    errorMessage =
+                        "No response from the server. Please try again later.";
+                } else {
+                    errorMessage = error.message;
+                }
+
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: errorMessage,
+                    life: 3000,
+                });
+            }
+        }
+    };
+
+    const handleLoad = async (note) => {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/note/${note._id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const data = response.data;
+            console.log("LOAD", data.imageData);
+
+            const canvas = canvasRef.current;
+            if (canvas) {
+                const ctx = canvas.getContext("2d");
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+
+                const img = new Image();
+                img.src = data.imageData;
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                };
+            }
+
+            toast.current.show({
+                severity: "success",
+                summary: "Loaded note",
+                detail: "The note has been loaded successfully",
+                life: 3000,
+            });
+        } catch (error) {
+            let errorMessage = "An error occurred.";
+
+            if (error.response) {
+                errorMessage =
+                    error.response.data.message ||
+                    `Error: ${error.response.status}`;
+            } else if (error.request) {
+                errorMessage =
+                    "No response from the server. Please try again later.";
+            } else {
+                errorMessage = error.message;
+            }
+
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: errorMessage,
+                life: 3000,
+            });
         }
     };
 
@@ -163,9 +265,18 @@ const Note = () => {
             </div>
 
             <div className="flex flex-row-reverse gap-4 p-4">
-                <Button label="Save" onClick={() => console.log("SAVE")} />
                 <Button label="Reset Canvas" onClick={resetCanvas} />
+                <Button
+                    label="Load from database"
+                    onClick={() => handleLoad(noteData)}
+                />
+                <Button
+                    label="Save to database"
+                    onClick={() => handleSave(noteData)}
+                />
             </div>
+
+            <Toast ref={toast} position="top-right" />
         </div>
     );
 };
