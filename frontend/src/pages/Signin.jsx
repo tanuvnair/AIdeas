@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { InputText } from "primereact/inputtext";
@@ -6,7 +6,10 @@ import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 
+import { verifyToken } from "../utils/utility.js";
+
 const SignIn = () => {
+    const token = localStorage.getItem("token");
     const toast = useRef(null);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -38,6 +41,22 @@ const SignIn = () => {
             });
         }
     };
+
+    useEffect(() => {
+        const handlePrexistingToken = async () => {
+            if (!token) {
+                navigate("/");
+                return;
+            }
+
+            const isTokenValid = await verifyToken(token);
+            if (isTokenValid) {
+                navigate("/dashboard");
+            }
+        };
+
+        handlePrexistingToken();
+    }, []);
 
     return (
         <div className="flex justify-content-center align-items-center h-screen">
