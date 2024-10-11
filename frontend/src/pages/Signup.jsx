@@ -128,7 +128,7 @@ const SignUp = () => {
                 <Button label={"Sign Up"} onClick={handleSignUp} />
             </form>
 
-            <Toast ref={toast} position="bottom-right" />
+            <Toast ref={toast} position="top-right" />
             <Dialog
                 header="Your account has been successfully created"
                 visible={successDialog}

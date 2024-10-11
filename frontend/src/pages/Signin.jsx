@@ -122,7 +122,7 @@ const SignIn = () => {
                 <Button label="Sign In" onClick={handleSignIn} />
             </form>
 
-            <Toast ref={toast} position="bottom-right" />
+            <Toast ref={toast} position="top-right" />
         </div>
     );
 };
