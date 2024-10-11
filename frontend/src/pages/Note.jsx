@@ -4,7 +4,6 @@ import { Button } from "primereact/button";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { verifyToken } from "../utils/utility";
-
 import { Toast } from "primereact/toast";
 
 const Note = () => {
@@ -34,6 +33,7 @@ const Note = () => {
             if (response.ok) {
                 const data = await response.json();
                 setNoteData(data);
+                handleLoad(data); // Load the note image after fetching data
             } else {
                 navigate("*");
             }
@@ -189,56 +189,23 @@ const Note = () => {
     };
 
     const handleLoad = async (note) => {
-        try {
-            const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/note/${note._id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
+        if (!note.imageData) return; // Don't attempt to load if there's no imageData
 
-            const data = response.data;
-            console.log("LOAD", data.imageData);
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const ctx = canvas.getContext("2d");
 
-            const canvas = canvasRef.current;
-            if (canvas) {
-                const ctx = canvas.getContext("2d");
-
-                const img = new Image();
-                img.src = data.imageData;
-                img.onload = () => {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, 0, 0);
-                };
-            }
+            const img = new Image();
+            img.src = note.imageData;
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            };
 
             toast.current.show({
                 severity: "success",
                 summary: "Loaded note",
                 detail: "The note has been loaded successfully",
-                life: 3000,
-            });
-        } catch (error) {
-            let errorMessage = "An error occurred.";
-
-            if (error.response) {
-                errorMessage =
-                    error.response.data.message ||
-                    `Error: ${error.response.status}`;
-            } else if (error.request) {
-                errorMessage =
-                    "No response from the server. Please try again later.";
-            } else {
-                errorMessage = error.message;
-            }
-
-            toast.current.show({
-                severity: "error",
-                summary: "Error",
-                detail: errorMessage,
                 life: 3000,
             });
         }
@@ -275,10 +242,7 @@ const Note = () => {
                     label="Load from database"
                     onClick={() => handleLoad(noteData)}
                 />
-                <Button
-                    label="Save to database"
-                    onClick={() => handleSave(noteData)}
-                />
+                <Button label="Save to database" onClick={handleSave} />
             </div>
 
             <Toast ref={toast} position="top-right" />
