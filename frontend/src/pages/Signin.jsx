@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
 
-const Signin = () => {
+const SignIn = () => {
+    const toast = useRef(null);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -27,7 +30,12 @@ const Signin = () => {
             localStorage.setItem("token", data.token);
             navigate("/dashboard");
         } else {
-            // SHOW TOAST HERE USING DATA.MESSAGE
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: data.message,
+                life: 3000,
+            });
         }
     };
 
@@ -35,8 +43,13 @@ const Signin = () => {
         <div className="flex justify-content-center align-items-center h-screen">
             <form onSubmit={handleSignIn} className="flex flex-column gap-3">
                 <h1 className="text-6xl">Sign In</h1>
-                <label htmlFor="username">Username</label>
-                <InputText id="username" aria-describedby="username-help" />
+                <label htmlFor="email">Email</label>
+                <InputText
+                    id="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="email"
+                />
 
                 <label htmlFor="password">Password</label>
                 <Password
@@ -44,23 +57,20 @@ const Signin = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     feedback={false}
-                    tabIndex={1}
+                    toggleMask
                 />
 
-                <p className="text-text-950">
+                <p>
                     {"Don't have an account? "}
-                    <Link
-                        className="text-accent-500 hover:text-accent-800"
-                        to={"/sign-up"}
-                    >
-                        Click here
-                    </Link>
+                    <Link to={"/sign-up"}>Click here</Link>
                 </p>
 
-                <Button label={"Sign In"} />
+                <Button label="Sign In" onClick={handleSignIn} />
             </form>
+
+            <Toast ref={toast} position="bottom-right" />
         </div>
     );
 };
 
-export default Signin;
+export default SignIn;
