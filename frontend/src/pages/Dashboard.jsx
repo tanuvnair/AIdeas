@@ -56,6 +56,8 @@ const Dashboard = () => {
         navigate("/");
     };
 
+    const handleCreateNote = () => {};
+
     return (
         <div className="px-8">
             <div className="flex justify-content-between align-items-center relative">
@@ -100,7 +102,7 @@ const Dashboard = () => {
             <Button
                 icon="pi pi-plus"
                 className="absolute bottom-0 right-0 mb-6 mr-6 w-1 "
-                onClick={() => console.log("ADD NOTE")} // Adjust as necessary
+                onClick={handleCreateNote}
             />
         </div>
     );
