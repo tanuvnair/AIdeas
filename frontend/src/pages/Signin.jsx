@@ -1,14 +1,12 @@
-import Textbox from "../components/Textbox";
-import Button from "../components/Button";
-import Toast from "../components/Toast";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { Button } from "primereact/button";
 
 const Signin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [toastMessage, setToastMessage] = useState("");
-    const [showToast, setShowToast] = useState(false);
     const navigate = useNavigate();
 
     const handleSignIn = async (e) => {
@@ -29,41 +27,24 @@ const Signin = () => {
             localStorage.setItem("token", data.token);
             navigate("/dashboard");
         } else {
-            showToastWithMessage(data.message || "An error occurred");
+            // SHOW TOAST HERE USING DATA.MESSAGE
         }
     };
 
-    const showToastWithMessage = (message) => {
-        setToastMessage(message);
-        setShowToast(true);
-    };
-
-    const handleCloseToast = () => {
-        setShowToast(false);
-    };
-
     return (
-        <div className="flex justify-center items-center h-screen bg-background-50">
-            <form
-                onSubmit={handleSignIn}
-                className="flex flex-col gap-6 w-1/3 bg-secondary-100 p-8 rounded-xl"
-            >
-                <h1 className="text-4xl font-semibold text-text-950">
-                    Sign In
-                </h1>
-                <Textbox
-                    label={"Email"}
-                    placeholder={"Email"}
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <Textbox
-                    label={"Password"}
-                    placeholder={"Password"}
-                    type="password"
+        <div className="flex justify-content-center align-items-center h-screen">
+            <form onSubmit={handleSignIn} className="flex flex-column gap-3">
+                <h1 className="text-6xl">Sign In</h1>
+                <label htmlFor="username">Username</label>
+                <InputText id="username" aria-describedby="username-help" />
+
+                <label htmlFor="password">Password</label>
+                <Password
+                    id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    feedback={false}
+                    tabIndex={1}
                 />
 
                 <p className="text-text-950">
@@ -78,10 +59,6 @@ const Signin = () => {
 
                 <Button label={"Sign In"} />
             </form>
-
-            {showToast && (
-                <Toast message={toastMessage} onClose={handleCloseToast} />
-            )}
         </div>
     );
 };
