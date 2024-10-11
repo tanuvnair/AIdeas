@@ -1,15 +1,13 @@
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
 import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { verifyToken } from "../utils/utility";
-import ColorSwatches from "../components/ColorSwatches"; // Keep your custom component for color selection
 
 const Note = () => {
     const token = localStorage.getItem("token");
     const canvasRef = useRef(null);
-    const [canvasBackground, setCanvasBackground] = useState("#FFFFFF");
+    const [canvasBackground] = useState("#000000");
     const [isDrawing, setIsDrawing] = useState(false);
     const [isEraser, setIsEraser] = useState(false);
     const [selectedColor, setSelectedColor] = useState("#FF5733");
@@ -56,17 +54,6 @@ const Note = () => {
         };
 
         initializeNote();
-    }, []);
-
-    useEffect(() => {
-        const appElement = document.getElementById("App");
-        if (appElement) {
-            if (appElement.classList.contains("dark")) {
-                setCanvasBackground("#000000");
-            } else {
-                setCanvasBackground("#FFFFFF");
-            }
-        }
     }, []);
 
     useEffect(() => {
@@ -151,7 +138,7 @@ const Note = () => {
     };
 
     return (
-        <div className="p-4">
+        <div className="flex flex-column p-4 h-screen gap-2">
             <div className="flex gap-4 items-center">
                 <Button
                     icon={<ArrowLeftCircleIcon />}
@@ -163,28 +150,21 @@ const Note = () => {
                 </h1>
             </div>
 
-            <div className="flex gap-6 mt-5 h-[calc(100%-8rem)]">
-                <div id="canvasContainer" className="">
-                    <canvas
-                        ref={canvasRef}
-                        id="noteCanvas"
-                        className="h-full w-full"
-                        onMouseDown={startDrawing}
-                        onMouseMove={draw}
-                        onMouseUp={stopDrawing}
-                        onMouseLeave={stopDrawing}
-                    />
-                </div>
+            <div id="canvasContainer" className="flex-1">
+                <canvas
+                    ref={canvasRef}
+                    id="noteCanvas"
+                    className="h-full w-full"
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                />
+            </div>
 
-                <div className="flex flex-col justify-between flex-wrap gap-4">
-                    <div>
-                        <Button
-                            label="Save"
-                            onClick={() => console.log("SAVE")}
-                        />
-                        <Button label="Reset Canvas" onClick={resetCanvas} />
-                    </div>
-                </div>
+            <div className="flex flex-row-reverse gap-4 p-4">
+                <Button label="Save" onClick={() => console.log("SAVE")} />
+                <Button label="Reset Canvas" onClick={resetCanvas} />
             </div>
         </div>
     );
