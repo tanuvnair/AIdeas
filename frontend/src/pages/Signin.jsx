@@ -43,7 +43,7 @@ const SignIn = () => {
     };
 
     useEffect(() => {
-        const handlePrexistingToken = async () => {
+        const handleExistingToken = async () => {
             if (!token) {
                 navigate("/");
                 return;
@@ -55,7 +55,7 @@ const SignIn = () => {
             }
         };
 
-        handlePrexistingToken();
+        handleExistingToken();
     }, []);
 
     return (

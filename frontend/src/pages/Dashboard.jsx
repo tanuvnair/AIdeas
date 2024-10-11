@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { verifyToken } from "../utils/utility.js";
-import Button from "../components/Button";
-import {
-    PlusIcon,
-    UserCircleIcon,
-    TrashIcon,
-    PencilIcon,
-} from "@heroicons/react/24/outline";
+
+import { Button } from "primereact/button";
+import { Card } from "primereact/card";
+import { Dropdown } from "primereact/dropdown";
 
 const Dashboard = () => {
     const token = localStorage.getItem("token");
     const [notes, setNotes] = useState([]);
-    const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
 
     const fetchNotes = async () => {
@@ -61,62 +57,50 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="bg-background-50 h-screen rounded-none px-8 py-4">
-            <div className="flex justify-between items-center align-middle relative">
-                <h1 className="text-accent-500 text-5xl font-bold">AIdeas</h1>
-                <div className="relative">
-                    <UserCircleIcon
-                        className=" text-primary-500  hover:text-primary-600 w-16 cursor-pointer transition-all duration-200"
-                        onClick={() => setShowDropdown(!showDropdown)}
-                    />
-                    {showDropdown && (
-                        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg z-10 bg-secondary-200   hover:bg-secondary-300 transition-all duration-200 ">
-                            <ul className="py-1">
-                                <li
-                                    className="block  px-4 py-2 text-text-950 cursor-pointer"
-                                    onClick={handleSignOut}
-                                >
-                                    Sign Out
-                                </li>
-                            </ul>
-                        </div>
-                    )}
-                </div>
+        <div className="px-8">
+            <div className="flex justify-content-between align-items-center relative">
+                <h1 className="text-7xl">AIdeas</h1>
+                <Dropdown
+                    options={[{ label: "Sign Out", value: "signout" }]}
+                    onChange={(e) => e.value === "signout" && handleSignOut()}
+                    className="absolute right-0 mt-2 w-48"
+                    placeholder="Options"
+                />
             </div>
 
-            <hr className="h-1 w-1/6 my-8 bg-gray-800 border-0" />
+            <hr />
 
-            <h1 className="text-text-950 text-3xl font-semibold mt-8">
-                Your Notes
-            </h1>
+            <h1 className="text-5xl mt-6">Your Notes</h1>
 
-            <div className="grid grid-cols-4 gap-4 mt-4 cursor-pointer h-auto">
+            <div className="grid grid-cols-4 gap-4 mt-4 h-auto">
                 {notes.map((note, index) => (
-                    <div
+                    <Card
                         key={note.id || index}
-                        className="bg-secondary-100 text-text-950 p-5 rounded-md flex items-center justify-between flex-wrap gap-6"
-                        onClick={() => console.log("NAVIGATE TO NOTE USING")}
+                        className="flex flex-auto justify-content-start relative"
                     >
-                        <h1 className="text-xl font-medium">
+                        <h1 className="text-2xl font-medium cursor-pointer">
                             {note.noteTitle}
                         </h1>
-                        <div className="flex gap-4 text-primary-500">
-                            <PencilIcon
+                        <div className="flex gap-2 absolute bottom-0 right-0 mb-3 mr-3">
+                            <Button
+                                icon="pi pi-pencil"
                                 onClick={() => console.log("EDIT")}
-                                className="w-6 transition-all duration-200 hover:text-primary-700"
+                                className="p-button-text"
                             />
-                            <TrashIcon
+                            <Button
+                                icon="pi pi-trash"
                                 onClick={() => console.log("DELETE")}
-                                className="w-6 transition-all duration-200 hover:text-primary-700"
+                                className="p-button-text"
                             />
                         </div>
-                    </div>
+                    </Card>
                 ))}
             </div>
 
             <Button
-                className="absolute bottom-6 right-6 rounded-full w-16 h-16"
-                label={<PlusIcon />}
+                icon="pi pi-plus"
+                className="absolute bottom-0 right-0 mb-6 mr-6 w-1 "
+                onClick={() => console.log("ADD NOTE")} // Adjust as necessary
             />
         </div>
     );
