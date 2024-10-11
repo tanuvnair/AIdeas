@@ -128,6 +128,13 @@ const Note = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
         }
+
+        toast.current.show({
+            severity: "error",
+            summary: "Canvas reset",
+            detail: "The canvas has been reset",
+            life: 3000,
+        });
     };
 
     const handleSave = async () => {
@@ -199,8 +206,6 @@ const Note = () => {
             const canvas = canvasRef.current;
             if (canvas) {
                 const ctx = canvas.getContext("2d");
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
 
                 const img = new Image();
                 img.src = data.imageData;
