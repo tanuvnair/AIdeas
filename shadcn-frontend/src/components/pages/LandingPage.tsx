@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { FiMoon, FiSun } from "react-icons/fi";
+import { useTheme } from "../ThemeProvider";
 
 export const LandingPage = () => {
+    const { theme, setTheme } = useTheme();
+
     const features = [
         {
             featureName: "Feature #1",
@@ -39,10 +43,19 @@ export const LandingPage = () => {
         },
     ];
 
+    const toggleTheme = () => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+    };
+
     return (
         <>
             {/* Hero Section */}
-            <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-8 lg:p-16">
+            <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-8 lg:p-16 relative">
+                <Button variant={"ghost"} className="absolute top-16 right-16">
+                    Sign In
+                </Button>
+
                 <div className="flex flex-col p-8 gap-6 max-w-2xl lg:max-w-3xl">
                     <div className="flex flex-col gap-4">
                         <h1 className="scroll-m-20 text-4xl lg:text-6xl font-extrabold tracking-tight lg:text-left">
@@ -75,7 +88,7 @@ export const LandingPage = () => {
             </section>
 
             {/* Key Features and Testimonials */}
-            <hr className="w-1/2 mx-auto my-8"></hr>
+            <hr className="w-1/2 mx-auto my-8" />
             <section className="flex flex-col justify-around px-8 lg:px-64 py-16 lg:py-32 gap-32">
                 <div>
                     <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-8">
@@ -119,6 +132,15 @@ export const LandingPage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Dark/Light Mode Toggle */}
+            <Button
+                variant={"outline"}
+                className="fixed bottom-8 right-8 p-3 rounded-full"
+                onClick={toggleTheme}
+            >
+                {theme === "dark" ? <FiSun size={24} /> : <FiMoon size={24} />}
+            </Button>
         </>
     );
 };
