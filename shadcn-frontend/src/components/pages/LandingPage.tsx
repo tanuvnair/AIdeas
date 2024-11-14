@@ -1,28 +1,65 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export const LandingPage = () => {
+    const features = [
+        {
+            featureName: "Feature #1",
+            description:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tempor condimentum risus eget fermentum. Nunc eu lorem vel arcu vulputate feugiat. Aenean ante metus, porta vel ullamcorper sed, pharetra a augue. Quisque mollis tincidunt mattis. Quisque ut cursus leo, ac convallis nulla. Donec sed congue tellus, pretium commodo nunc. Cras erat velit, iaculis a mollis id, sodales at dolor.",
+        },
+        {
+            featureName: "Feature #2",
+            description:
+                "Ut mattis magna non luctus feugiat. Mauris elit arcu, elementum a dui nec, viverra bibendum turpis. Integer fringilla scelerisque tristique. Nam a ligula ante. Nam ut facilisis orci. Vestibulum odio nisi, gravida nec faucibus sed, eleifend in ex. Praesent felis purus, consequat et velit quis, iaculis vehicula metus. Ut sed dignissim ante. Aliquam sit amet dapibus mauris. Praesent vitae suscipit nulla.",
+        },
+        {
+            featureName: "Feature #3",
+            description:
+                "In accumsan urna blandit mauris aliquet, sed finibus odio pretium. Cras ante nunc, hendrerit vitae turpis eget, sollicitudin laoreet neque. Phasellus non aliquet arcu, eget feugiat odio. Proin pulvinar eros nunc, sed ultricies risus placerat sed. Nunc viverra in nisi id fermentum. Vivamus mauris est, lacinia at lacus a, varius sodales metus. Morbi tristique massa turpis, vel lobortis ex imperdiet non.",
+        },
+    ];
+
+    const testimonials = [
+        {
+            author: "Tanuv Nair",
+            message:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tempor condimentum risus eget fermentum. Nunc eu lorem vel arcu vulputate feugiat. Aenean ante metus, porta vel ullamcorper sed, pharetra a augue. Quisque mollis tincidunt mattis. Quisque ut cursus leo, ac convallis nulla. Donec sed congue tellus, pretium commodo nunc. Cras erat velit, iaculis a mollis id, sodales at dolor.",
+        },
+        {
+            author: "Vunat Rian",
+            message:
+                "Ut mattis magna non luctus feugiat. Mauris elit arcu, elementum a dui nec, viverra bibendum turpis. Integer fringilla scelerisque tristique. Nam a ligula ante. Nam ut facilisis orci. Vestibulum odio nisi, gravida nec faucibus sed, eleifend in ex. Praesent felis purus, consequat et velit quis, iaculis vehicula metus. Ut sed dignissim ante. Aliquam sit amet dapibus mauris. Praesent vitae suscipit nulla.",
+        },
+        {
+            author: "Meows the ninth",
+            message:
+                "In accumsan urna blandit mauris aliquet, sed finibus odio pretium. Cras ante nunc, hendrerit vitae turpis eget, sollicitudin laoreet neque. Phasellus non aliquet arcu, eget feugiat odio. Proin pulvinar eros nunc, sed ultricies risus placerat sed. Nunc viverra in nisi id fermentum. Vivamus mauris est, lacinia at lacus a, varius sodales metus. Morbi tristique massa turpis, vel lobortis ex imperdiet non.",
+        },
+    ];
+
     return (
         <>
             {/* Hero Section */}
-            <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-8 lg:p-16 ">
+            <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-8 lg:p-16">
                 <div className="flex flex-col p-8 gap-6 max-w-2xl lg:max-w-3xl">
                     <div className="flex flex-col gap-4">
-                        <h1 className="scroll-m-20 text-4xl lg:text-6xl font-extrabold tracking-tight  lg:text-left">
+                        <h1 className="scroll-m-20 text-4xl lg:text-6xl font-extrabold tracking-tight lg:text-left">
                             AIdeas
                         </h1>
-                        <p className="text-lg text-muted-foreground  lg:text-left">
+                        <p className="text-lg text-muted-foreground lg:text-left">
                             Your AI note taking assistant, at your fingertips,
                             powered by Gemini
                         </p>
                     </div>
 
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
                         <Button variant={"outline"} className="p-6">
                             Get started
                         </Button>
-                        <Button variant={"link"}>
+
+                        <Button variant={"link"} className="px-0 lg:px-4">
                             Already have an account?
                         </Button>
                     </div>
@@ -37,32 +74,48 @@ export const LandingPage = () => {
                 </div>
             </section>
 
-            <hr className="w-1/2 mx-auto m-8"></hr>
-
-            {/* Key Features Section */}
-            <section className="py-14 px-8">
-                <div className="flex flex-col items-center max-w-6xl mx-auto">
-                    <h2 className="text-3xl font-semibold tracking-tight mb-14">
+            {/* Key Features and Testimonials */}
+            <hr className="w-1/2 mx-auto my-8"></hr>
+            <section className="flex flex-col justify-around px-8 lg:px-64 py-16 lg:py-32 gap-32">
+                <div>
+                    <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-8">
                         Key Features
                     </h2>
-                    <div className="flex flex-col md:flex-row gap-8">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-primary">
-                                    Feature #1
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="">
-                                    Lorem ipsum dolor sit amet consectetur
-                                    adipisicing elit. Maxime labore doloremque
-                                    aliquid maiores culpa velit recusandae
-                                    possimus odio quod, a amet ut rerum expedita
-                                    consequuntur asperiores molestiae tempora
-                                    architecto adipisci.
-                                </p>
-                            </CardContent>
-                        </Card>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-full">
+                        {features.map((feature, index) => (
+                            <Card key={index}>
+                                <CardHeader>
+                                    <CardTitle className="text-primary">
+                                        {feature.featureName}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>{feature.description}</p>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex flex-col items-end">
+                    <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 mb-8">
+                        Testimonials
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-full">
+                        {testimonials.map((testimonial, index) => (
+                            <Card key={index}>
+                                <CardHeader className="flex flex-row gap-6">
+                                    <Avatar>
+                                        <AvatarImage src="https://github.com/shadcn.png" />
+                                        <AvatarFallback>CN</AvatarFallback>
+                                    </Avatar>
+                                    <CardTitle>{testimonial.author}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>{testimonial.message}</p>
+                                </CardContent>
+                            </Card>
+                        ))}
                     </div>
                 </div>
             </section>
