@@ -3,9 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "../ThemeProvider";
+import { useNavigate } from "react-router-dom";
 
 export const LandingPage = () => {
     const { theme, setTheme } = useTheme();
+    const navigate = useNavigate();
 
     const features = [
         {
@@ -52,7 +54,13 @@ export const LandingPage = () => {
         <>
             {/* Hero Section */}
             <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-8 lg:p-16 relative">
-                <Button variant={"ghost"} className="absolute top-16 right-16">
+                <Button
+                    variant={"ghost"}
+                    className="absolute top-16 right-16"
+                    onClick={() => {
+                        navigate("/sign-in");
+                    }}
+                >
                     Sign In
                 </Button>
 
@@ -72,7 +80,13 @@ export const LandingPage = () => {
                             Get started
                         </Button>
 
-                        <Button variant={"link"} className="px-0 lg:px-4">
+                        <Button
+                            variant={"link"}
+                            className="px-0 lg:px-4"
+                            onClick={() => {
+                                navigate("/sign-in");
+                            }}
+                        >
                             Already have an account?
                         </Button>
                     </div>

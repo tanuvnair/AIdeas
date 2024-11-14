@@ -74,7 +74,7 @@ const Dashboard = () => {
 
     const handleSignOut = () => {
         localStorage.removeItem("token");
-        navigate("/");
+        navigate("");
     };
 
     const handleCreateNote = async () => {

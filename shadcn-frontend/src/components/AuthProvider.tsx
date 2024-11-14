@@ -1,37 +1,133 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-
-interface AuthContextType {
-    isAuthenticated: boolean;
-    login: (username: string, password: string) => Promise<void>;
-    logout: () => void;
+export interface User {
+    id: string;
+    email: string;
 }
 
+export interface AuthContextType {
+    user: User | null;
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    error: string | null;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => void;
+    clearError: () => void;
+}
+
+import React, {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    ReactNode,
+} from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const login = async (username: string, password: string) => {
-        // Replace with real authentication logic
-        if (username === "admin" && password === "password") {
-            setIsAuthenticated(true);
-            navigate("/dashboard");
+    const clearError = () => setError(null);
+
+    const handleError = (error: any) => {
+        if (error.response) {
+            setError(
+                error.response.data.message || `Error: ${error.response.status}`
+            );
+        } else if (error.request) {
+            setError("No response from the server. Please try again later.");
         } else {
-            alert("Invalid credentials");
+            setError(error.message || "An unexpected error occurred");
         }
     };
 
-    const logout = () => {
+    useEffect(() => {
+        const initializeAuth = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const response = await api.post("/auth/verify-token");
+                setUser(response.data.user);
+                setIsAuthenticated(true);
+            } catch (error) {
+                localStorage.removeItem("token");
+                handleError(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        initializeAuth();
+    }, []);
+
+    const login = async (email: string, password: string) => {
+        try {
+            setIsLoading(true);
+            setError(null);
+
+            const response = await api.post("/auth/sign-in", {
+                email,
+                password,
+            });
+
+            const { token, user } = response.data;
+            localStorage.setItem("token", token);
+            setUser(user);
+            setIsAuthenticated(true);
+            navigate("/dashboard");
+        } catch (error) {
+            handleError(error);
+            throw error; // Re-throw to handle in the UI
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const logout = async () => {
+        localStorage.removeItem("token");
+        setUser(null);
         setIsAuthenticated(false);
-        navigate("/login");
+        navigate("/");
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                isAuthenticated,
+                isLoading,
+                error,
+                login,
+                logout,
+                clearError,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

@@ -14,19 +14,33 @@ import { Dashboard } from "@/components/pages/Dashboard";
 
 function App() {
     return (
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <BrowserRouter>
-                <AuthProvider>
+        <BrowserRouter>
+            <AuthProvider>
+                <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                     <Routes>
+                        {/* Public routes */}
                         <Route path="/" element={<LandingPage />} />
-                        <Route path="/sign-in" element={<SignIn />} />
+
+                        {/* Auth routes - redirects to dashboard if already logged it */}
+                        <Route
+                            element={
+                                <ProtectedRoute
+                                    requireAuth={false}
+                                    redirectTo="/dashboard"
+                                />
+                            }
+                        >
+                            <Route path="/sign-in" element={<SignIn />} />
+                        </Route>
+
+                        {/* Protected routes - require authentication */}
                         <Route element={<ProtectedRoute />}>
                             <Route path="/dashboard" element={<Dashboard />} />
                         </Route>
                     </Routes>
-                </AuthProvider>
-            </BrowserRouter>
-        </ThemeProvider>
+                </ThemeProvider>
+            </AuthProvider>
+        </BrowserRouter>
     );
 }
 
