@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export const SignIn = () => {
-    const { login } = useAuth();
+    const { login, isLoading } = useAuth();
 
     const formSchema = z.object({
         email: z
@@ -98,7 +98,14 @@ export const SignIn = () => {
                             )}
                         />
 
-                        <Button type="submit">Sign In</Button>
+                        <Button type="submit">
+                            Sign In
+                            {isLoading ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-background"></div>
+                            ) : (
+                                ""
+                            )}
+                        </Button>
                     </form>
                 </Form>
             </div>

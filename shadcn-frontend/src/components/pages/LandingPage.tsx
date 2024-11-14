@@ -2,12 +2,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { FiMoon, FiSun } from "react-icons/fi";
+import { ArrowUp } from "lucide-react";
 import { useTheme } from "../ThemeProvider";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export const LandingPage = () => {
     const { theme, setTheme } = useTheme();
     const navigate = useNavigate();
+    const [isVisible, setIsVisible] = useState(false);
 
     const features = [
         {
@@ -44,6 +47,28 @@ export const LandingPage = () => {
                 "In accumsan urna blandit mauris aliquet, sed finibus odio pretium. Cras ante nunc, hendrerit vitae turpis eget, sollicitudin laoreet neque. Phasellus non aliquet arcu, eget feugiat odio. Proin pulvinar eros nunc, sed ultricies risus placerat sed. Nunc viverra in nisi id fermentum. Vivamus mauris est, lacinia at lacus a, varius sodales metus. Morbi tristique massa turpis, vel lobortis ex imperdiet non.",
         },
     ];
+
+    const toggleVisibility = () => {
+        if (window.scrollY > 300) {
+            setIsVisible(true);
+        } else {
+            setIsVisible(false);
+        }
+    };
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    };
+
+    useEffect(() => {
+        window.addEventListener("scroll", toggleVisibility);
+        return () => {
+            window.removeEventListener("scroll", toggleVisibility);
+        };
+    }, []);
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -147,13 +172,38 @@ export const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Dark/Light Mode Toggle */}
+            {/* Theme Toggle Button */}
             <Button
                 variant={"outline"}
-                className="fixed bottom-8 right-8 p-3 rounded-full"
+                className="fixed bottom-8 left-8 px-4 py-6 rounded-full"
                 onClick={toggleTheme}
             >
                 {theme === "dark" ? <FiSun size={24} /> : <FiMoon size={24} />}
+            </Button>
+
+            {/* Scroll to top button */}
+            <Button
+                variant={"outline"}
+                className={`
+                        fixed
+                        bottom-8
+                        right-8
+                        px-6
+                        py-8
+                        rounded-full
+                        transition-opacity
+                        duration-300
+                        ${
+                            isVisible
+                                ? "opacity-100"
+                                : "opacity-0 pointer-events-none"
+                        }
+
+                    `}
+                onClick={scrollToTop}
+                aria-label="Scroll to top"
+            >
+                <ArrowUp size={24} />
             </Button>
         </>
     );
