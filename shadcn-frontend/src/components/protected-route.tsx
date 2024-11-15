@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "./auth-provider";
 
 interface ProtectedRouteProps {
     requireAuth?: boolean;

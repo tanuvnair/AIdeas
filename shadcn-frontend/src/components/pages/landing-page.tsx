@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { ArrowUp } from "lucide-react";
-import { useTheme } from "../ThemeProvider";
+import { useTheme } from "../theme-provider";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -79,7 +79,7 @@ export const LandingPage = () => {
         <>
             {/* Hero Section */}
             <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-4 lg:p-16 relative">
-                <div className="absolute top-16 right-16 flex items-center gap-4">
+                <div className="absolute top-8 right-8 flex items-center gap-4">
                     <Button
                         variant="outline"
                         onClick={toggleTheme}
@@ -187,21 +187,9 @@ export const LandingPage = () => {
             {/* Scroll to top button */}
             <Button
                 variant="outline"
-                className={`
-                    fixed
-                    bottom-8
-                    right-8
-                    px-6
-                    py-8
-                    rounded-full
-                    transition-opacity
-                    duration-300
-                    ${
-                        isVisible
-                            ? "opacity-100"
-                            : "opacity-0 pointer-events-none"
-                    }
-                `}
+                className={`fixed bottom-8 right-8 px-6 py-8 rounded-full transition-opacity duration-300 ${
+                    isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
                 onClick={scrollToTop}
                 aria-label="Scroll to top"
             >

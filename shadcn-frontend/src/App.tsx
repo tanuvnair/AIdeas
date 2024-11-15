@@ -2,16 +2,16 @@
 import "./App.css";
 
 // ContextAPI's and routing
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { AuthProvider } from "@/components/AuthProvider";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/components/auth-provider";
+import ProtectedRoute from "@/components/protected-route";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Pages
-import { LandingPage } from "@/components/pages/LandingPage";
-import { Login } from "@/components/pages/Login";
-import { SignUp } from "@/components/pages/SignUp";
-import { Dashboard } from "@/components/pages/Dashboard";
+import { LandingPage } from "@/components/pages/landing-page";
+import { Login } from "@/components/pages/login";
+import { SignUp } from "@/components/pages/sign-up";
+import { Dashboard } from "@/components/pages/dashboard";
 
 function App() {
     return (
