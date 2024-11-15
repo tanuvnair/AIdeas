@@ -78,7 +78,7 @@ export const LandingPage = () => {
     return (
         <>
             {/* Hero Section */}
-            <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-8 lg:p-16 relative">
+            <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-4 lg:p-16 relative">
                 <div className="absolute top-16 right-16 flex items-center gap-4">
                     <Button
                         variant="outline"
@@ -94,6 +94,7 @@ export const LandingPage = () => {
                     </Button>
                     <Button
                         variant="ghost"
+                        className="hidden lg:block"
                         onClick={() => navigate("/sign-in")}
                     >
                         Log In

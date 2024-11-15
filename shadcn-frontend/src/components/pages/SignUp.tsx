@@ -21,7 +21,6 @@ import { useState } from "react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -119,15 +118,18 @@ export const SignUp = () => {
     };
 
     return (
-        <div className="relative min-h-screen">
-            <Button
-                variant="ghost"
-                className="absolute top-8 left-8"
-                onClick={() => navigate("/")}
-            >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-            </Button>
+        <div className="min-h-screen">
+            <div className={`${error ? "mb-8" : ""}`}>
+                <Button
+                    variant="ghost"
+                    className="absolute top-8 left-8"
+                    onClick={() => navigate("/")}
+                >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back
+                </Button>
+            </div>
+
             <div className="flex flex-col justify-center max-w-md mx-auto h-screen gap-8 p-8">
                 <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                     Create your new account
@@ -151,7 +153,7 @@ export const SignUp = () => {
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input type="email" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
