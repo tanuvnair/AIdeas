@@ -2,7 +2,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import {
     Form,
@@ -13,7 +13,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useState } from "react";
@@ -59,7 +59,7 @@ export const Login = () => {
             <Button
                 variant="ghost"
                 className="absolute top-8 left-8"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/")}
             >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
@@ -109,6 +109,13 @@ export const Login = () => {
                                 </FormItem>
                             )}
                         />
+
+                        <Link
+                            className="text-primary underline-offset-4 hover:underline"
+                            to={"/sign-up"}
+                        >
+                            Don't have an account?
+                        </Link>
 
                         <Button type="submit">
                             Log In

@@ -13,44 +13,60 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Link, useNavigate } from "react-router-dom";
+import axios, { AxiosError } from "axios";
+import { useState } from "react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 export const SignUp = () => {
-    const { login, isLoading } = useAuth();
+    const { isLoading } = useAuth();
     const navigate = useNavigate();
+    const [error, setError] = useState<AxiosError | null>(null);
+    const [successDialog, setSuccessDialog] = useState(false);
 
-    const formSchema = z.object({
-        email: z
-            .string()
-            .email("Invalid email address")
-            .min(1, "Email is required"),
+    const handleSuccessDialogClose = () => {
+        setSuccessDialog(false);
+    };
 
-        password: z
-            .string()
-            .min(8, "Password must be at least 8 characters long")
-            .regex(
-                /[A-Z]/,
-                "Password must contain at least one uppercase letter"
-            )
-            .regex(
-                /[a-z]/,
-                "Password must contain at least one lowercase letter"
-            )
-            .regex(/[0-9]/, "Password must contain at least one number")
-            .regex(
-                /[@$!%*?&]/,
-                "Password must contain at least one special character"
-            ),
+    const formSchema = z
+        .object({
+            email: z
+                .string()
+                .email("Invalid email address")
+                .min(1, "Email is required"),
 
-        confirmPassword: z
-            .string()
-            .min(1, "Confirm Password is required")
-            .refine(
-                (value: string) =>
-                    value === formSchema.shape.password._def.value,
-                "Passwords do not match"
-            ),
-    });
+            password: z
+                .string()
+                .min(8, "Password must be at least 8 characters long")
+                .regex(
+                    /[A-Z]/,
+                    "Password must contain at least one uppercase letter"
+                )
+                .regex(
+                    /[a-z]/,
+                    "Password must contain at least one lowercase letter"
+                )
+                .regex(/[0-9]/, "Password must contain at least one number")
+                .regex(
+                    /[@$!%*?&]/,
+                    "Password must contain at least one special character"
+                ),
+
+            confirmPassword: z.string().min(1, "Confirm password is required"),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+            message: "The passwords don't match",
+            path: ["confirmPassword"],
+        });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -64,12 +80,42 @@ export const SignUp = () => {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         const { email, password } = values;
 
-        try {
-            await login(email, password);
-        } catch (error) {
-            console.error("Login failed:", error);
-            alert("Invalid credentials. Please try again.");
-        }
+        axios
+            .post(
+                `${import.meta.env.VITE_API_URL}/auth/sign-up`,
+                {
+                    email: email,
+                    password: password,
+                },
+                {
+                    headers: {
+                        Authorization: "Bearer token",
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+            .then(() => {
+                setSuccessDialog(true);
+                <DialogTrigger>Open</DialogTrigger>;
+            })
+            .catch((error) => {
+                let errorMessage = "An error occurred.";
+
+                if (error.response) {
+                    errorMessage =
+                        error.response.data.message ||
+                        `Error: ${error.response.status}`;
+                } else if (error.request) {
+                    errorMessage =
+                        "No response from the server. Please try again later.";
+                } else {
+                    errorMessage = error.message;
+                }
+
+                setError({
+                    message: errorMessage,
+                } as AxiosError);
+            });
     };
 
     return (
@@ -77,7 +123,7 @@ export const SignUp = () => {
             <Button
                 variant="ghost"
                 className="absolute top-8 left-8"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/")}
             >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
@@ -86,6 +132,13 @@ export const SignUp = () => {
                 <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                     Create your new account
                 </h1>
+                {error && (
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{error.message}</AlertDescription>
+                    </Alert>
+                )}
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
@@ -133,6 +186,13 @@ export const SignUp = () => {
                             )}
                         />
 
+                        <Link
+                            className="text-primary underline-offset-4 hover:underline"
+                            to={"/sign-in"}
+                        >
+                            Already have an account?
+                        </Link>
+
                         <Button type="submit">
                             Sign Up
                             {isLoading ? (
@@ -144,6 +204,18 @@ export const SignUp = () => {
                     </form>
                 </Form>
             </div>
+
+            <Dialog
+                open={successDialog}
+                onOpenChange={handleSuccessDialogClose}
+            >
+                <DialogContent>
+                    <DialogHeader className="gap-4">
+                        <DialogTitle>Your account was created</DialogTitle>
+                        <Button onClick={handleSuccessDialogClose}>Done</Button>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
