@@ -212,7 +212,9 @@ export const SignUp = () => {
                 <DialogContent>
                     <DialogHeader className="gap-4">
                         <DialogTitle>Your account was created</DialogTitle>
-                        <Button onClick={handleSuccessDialogClose}>Done</Button>
+                        <Button onClick={() => navigate("/sign-in")}>
+                            Done
+                        </Button>
                     </DialogHeader>
                 </DialogContent>
             </Dialog>

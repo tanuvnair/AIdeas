@@ -17,7 +17,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useState } from "react";
-import { AxiosError } from "axios";
+import { Axios, AxiosError } from "axios";
 
 export const Login = () => {
     const { login, isLoading } = useAuth();
@@ -49,7 +49,7 @@ export const Login = () => {
         } catch (err) {
             console.log(err);
             setError({
-                message: "Invalid credentials. Please try again.",
+                message: "Invalid credentials or account does not exist",
             } as AxiosError);
         }
     };
