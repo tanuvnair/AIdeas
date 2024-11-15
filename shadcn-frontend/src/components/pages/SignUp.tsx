@@ -12,9 +12,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const SignUp = () => {
     const { login, isLoading } = useAuth();
+    const navigate = useNavigate();
 
     const formSchema = z.object({
         email: z
@@ -70,7 +73,15 @@ export const SignUp = () => {
     };
 
     return (
-        <>
+        <div className="relative min-h-screen">
+            <Button
+                variant="ghost"
+                className="absolute top-8 left-8"
+                onClick={() => navigate(-1)}
+            >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+            </Button>
             <div className="flex flex-col justify-center max-w-md mx-auto h-screen gap-8 p-8">
                 <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                     Create your new account
@@ -133,6 +144,6 @@ export const SignUp = () => {
                     </form>
                 </Form>
             </div>
-        </>
+        </div>
     );
 };

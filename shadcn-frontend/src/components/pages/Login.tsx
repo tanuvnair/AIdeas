@@ -2,6 +2,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../AuthProvider";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import {
     Form,
     FormControl,
@@ -15,6 +17,7 @@ import { Button } from "@/components/ui/button";
 
 export const Login = () => {
     const { login, isLoading } = useAuth();
+    const navigate = useNavigate();
 
     const loginFormSchema = z.object({
         email: z
@@ -46,7 +49,16 @@ export const Login = () => {
     };
 
     return (
-        <>
+        <div className="relative min-h-screen">
+            <Button
+                variant="ghost"
+                className="absolute top-8 left-8"
+                onClick={() => navigate(-1)}
+            >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+            </Button>
+
             <div className="flex flex-col justify-center max-w-md mx-auto h-screen gap-8 p-8">
                 <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                     Log In
@@ -87,14 +99,12 @@ export const Login = () => {
                         <Button type="submit">
                             Log In
                             {isLoading ? (
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-background"></div>
-                            ) : (
-                                ""
-                            )}
+                                <div className="ml-1 animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            ) : null}
                         </Button>
                     </form>
                 </Form>
             </div>
-        </>
+        </div>
     );
 };
