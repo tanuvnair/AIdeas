@@ -79,15 +79,26 @@ export const LandingPage = () => {
         <>
             {/* Hero Section */}
             <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-8 lg:p-16 relative">
-                <Button
-                    variant={"ghost"}
-                    className="absolute top-16 right-16"
-                    onClick={() => {
-                        navigate("/sign-in");
-                    }}
-                >
-                    Sign In
-                </Button>
+                <div className="absolute top-16 right-16 flex items-center gap-4">
+                    <Button
+                        variant="outline"
+                        onClick={toggleTheme}
+                        className="p-2"
+                        aria-label="Toggle theme"
+                    >
+                        {theme === "dark" ? (
+                            <FiSun size={24} />
+                        ) : (
+                            <FiMoon size={24} />
+                        )}
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        onClick={() => navigate("/sign-in")}
+                    >
+                        Sign In
+                    </Button>
+                </div>
 
                 <div className="flex flex-col p-8 gap-6 max-w-2xl lg:max-w-3xl">
                     <div className="flex flex-col gap-4">
@@ -101,16 +112,14 @@ export const LandingPage = () => {
                     </div>
 
                     <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
-                        <Button variant={"outline"} className="p-6">
+                        <Button variant="default" className="p-6">
                             Get started
                         </Button>
 
                         <Button
-                            variant={"link"}
-                            className="px-0 lg:px-4"
-                            onClick={() => {
-                                navigate("/sign-in");
-                            }}
+                            variant="outline"
+                            className="p-6"
+                            onClick={() => navigate("/sign-in")}
                         >
                             Already have an account?
                         </Button>
@@ -137,9 +146,7 @@ export const LandingPage = () => {
                         {features.map((feature, index) => (
                             <Card key={index}>
                                 <CardHeader>
-                                    <CardTitle className="text-primary">
-                                        {feature.featureName}
-                                    </CardTitle>
+                                    <CardTitle>{feature.featureName}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <p>{feature.description}</p>
@@ -172,34 +179,24 @@ export const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Theme Toggle Button */}
-            <Button
-                variant={"outline"}
-                className="fixed bottom-8 left-8 px-4 py-6 rounded-full"
-                onClick={toggleTheme}
-            >
-                {theme === "dark" ? <FiSun size={24} /> : <FiMoon size={24} />}
-            </Button>
-
             {/* Scroll to top button */}
             <Button
-                variant={"outline"}
+                variant="outline"
                 className={`
-                        fixed
-                        bottom-8
-                        right-8
-                        px-6
-                        py-8
-                        rounded-full
-                        transition-opacity
-                        duration-300
-                        ${
-                            isVisible
-                                ? "opacity-100"
-                                : "opacity-0 pointer-events-none"
-                        }
-
-                    `}
+                    fixed
+                    bottom-8
+                    right-8
+                    px-6
+                    py-8
+                    rounded-full
+                    transition-opacity
+                    duration-300
+                    ${
+                        isVisible
+                            ? "opacity-100"
+                            : "opacity-0 pointer-events-none"
+                    }
+                `}
                 onClick={scrollToTop}
                 aria-label="Scroll to top"
             >
