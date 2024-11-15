@@ -96,7 +96,7 @@ export const LandingPage = () => {
                         variant="ghost"
                         onClick={() => navigate("/sign-in")}
                     >
-                        Sign In
+                        Log In
                     </Button>
                 </div>
 
@@ -112,7 +112,11 @@ export const LandingPage = () => {
                     </div>
 
                     <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
-                        <Button variant="default" className="p-6">
+                        <Button
+                            variant="default"
+                            className="p-6"
+                            onClick={() => navigate("/sign-up")}
+                        >
                             Get started
                         </Button>
 

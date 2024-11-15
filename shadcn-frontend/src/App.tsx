@@ -9,7 +9,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Pages
 import { LandingPage } from "@/components/pages/LandingPage";
-import { SignIn } from "@/components/pages/SignIn";
+import { Login } from "@/components/pages/Login";
+import { SignUp } from "@/components/pages/SignUp";
 import { Dashboard } from "@/components/pages/Dashboard";
 
 function App() {
@@ -30,7 +31,8 @@ function App() {
                                 />
                             }
                         >
-                            <Route path="/sign-in" element={<SignIn />} />
+                            <Route path="/sign-in" element={<Login />} />
+                            <Route path="/sign-up" element={<SignUp />} />
                         </Route>
 
                         {/* Protected routes - require authentication */}

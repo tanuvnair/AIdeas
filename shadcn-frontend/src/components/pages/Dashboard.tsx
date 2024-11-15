@@ -1,3 +1,14 @@
 export const Dashboard = () => {
-    return <div>This is Dashboard page</div>;
+    return (
+        <div>
+            <button
+                onClick={() => {
+                    localStorage.removeItem("token");
+                    window.location.href = "/";
+                }}
+            >
+                LOGOUT
+            </button>
+        </div>
+    );
 };
