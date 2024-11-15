@@ -1,4 +1,3 @@
-import * as React from "react";
 import { FiSun, FiMoon } from "react-icons/fi";
 import {
     Card,
@@ -9,6 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
 
 const cardData = [
     {
@@ -46,41 +47,35 @@ export const Dashboard = () => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen p-6">
-            <header className="flex justify-between items-center py-8 px-6 border-b">
-                <h1 className="text-2xl font-semibold">Dashboard</h1>
-                <div className="flex items-center gap-4">
-                    <Button
-                        variant="outline"
-                        onClick={toggleTheme}
-                        className="p-2"
-                        aria-label="Toggle theme"
-                    >
-                        {theme === "dark" ? (
-                            <FiSun size={24} />
-                        ) : (
-                            <FiMoon size={24} />
-                        )}
-                    </Button>
-                    <Button variant="ghost" onClick={logout}>
-                        Log out
-                    </Button>
-                </div>
-            </header>
+        <SidebarProvider>
+            <DashboardSidebar />
+            <div className="flex flex-col min-h-screen w-full ">
+                <header className="flex justify-between items-center p-8 ">
+                    <SidebarTrigger />
+                    <div className="flex gap-4">
+                        <Button
+                            variant="outline"
+                            onClick={toggleTheme}
+                            className="p-2"
+                            aria-label="Toggle theme"
+                        >
+                            {theme === "dark" ? (
+                                <FiSun size={24} />
+                            ) : (
+                                <FiMoon size={24} />
+                            )}
+                        </Button>
+                        <Button variant="ghost" onClick={logout}>
+                            Log out
+                        </Button>
+                    </div>
+                </header>
 
-            <main className="grid gap-4 p-6 lg:grid-cols-3 md:grid-cols-2">
-                {cardData.map((card, index) => (
-                    <Card key={index} className="hover:shadow-lg">
-                        <CardHeader>
-                            <CardTitle>{card.title}</CardTitle>
-                            <CardDescription>
-                                {card.description}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>{card.content}</CardContent>
-                    </Card>
-                ))}
-            </main>
-        </div>
+                {/* Main content should take remaining space */}
+                <main className="flex-grow p-6">
+                    {/* Your main content goes here */}
+                </main>
+            </div>
+        </SidebarProvider>
     );
 };
