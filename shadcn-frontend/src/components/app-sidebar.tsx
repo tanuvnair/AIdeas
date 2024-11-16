@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { DatePicker } from "@/components/date-picker";
 import { NavUser } from "@/components/nav-user";
 import {
     Sidebar,
@@ -38,10 +37,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader className="h-16 border-b border-sidebar-border">
                 <NavUser user={userData} />
             </SidebarHeader>
-            <SidebarContent>
-                <DatePicker />
-                <SidebarSeparator className="mx-0" />
-            </SidebarContent>
+            <SidebarContent></SidebarContent>
 
             <SidebarRail />
         </Sidebar>

@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     requireAuth = true,
-    redirectTo = "/sign-in",
+    redirectTo = "/login",
 }) => {
     const { isAuthenticated } = useAuth();
     const location = useLocation();
