@@ -18,6 +18,13 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useState } from "react";
 import { AxiosError } from "axios";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent,
+} from "@/components/ui/card";
 
 export const Login = () => {
     const { login, isLoading } = useAuth();
@@ -55,7 +62,7 @@ export const Login = () => {
     };
 
     return (
-        <div className="min-h-screen">
+        <div className="flex flex-col h-screen items-center justify-center gap-4">
             <div>
                 <Button
                     variant="ghost"
@@ -67,67 +74,84 @@ export const Login = () => {
                 </Button>
             </div>
 
-            <div className="flex flex-col justify-center max-w-md mx-auto h-screen gap-8 p-8">
-                <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                    Log In
-                </h1>
-                {error && (
-                    <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{error.message}</AlertDescription>
-                    </Alert>
-                )}
+            {error && (
+                <Alert variant="destructive" className="max-w-sm w-full">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error.message}</AlertDescription>
+                </Alert>
+            )}
 
-                <Form {...loginForm}>
-                    <form
-                        onSubmit={loginForm.handleSubmit(onSubmit)}
-                        className="flex flex-col gap-8"
-                    >
-                        <FormField
-                            control={loginForm.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type="email" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+            <Card className="mx-auto max-w-sm w-full">
+                <CardHeader>
+                    <CardTitle className="text-2xl">Login</CardTitle>
 
-                        <FormField
-                            control={loginForm.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <CardDescription>
+                        Enter your email below to login to your account
+                    </CardDescription>
 
-                        <Link
-                            className="text-primary underline-offset-4 hover:underline"
-                            to={"/sign-up"}
-                        >
-                            Don't have an account?
-                        </Link>
+                    <div></div>
+                </CardHeader>
 
-                        <Button type="submit">
-                            Log In
-                            {isLoading ? (
-                                <div className="ml-1 animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            ) : null}
-                        </Button>
-                    </form>
-                </Form>
-            </div>
+                <CardContent>
+                    <Form {...loginForm}>
+                        <form onSubmit={loginForm.handleSubmit(onSubmit)}>
+                            <div className="grid gap-4">
+                                <div className="grid gap-2">
+                                    <FormField
+                                        control={loginForm.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="email"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <FormField
+                                        control={loginForm.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Password</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="password"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <Button type="submit">
+                                    Log In
+                                    {isLoading ? (
+                                        <div className="ml-1 animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                    ) : null}
+                                </Button>
+                            </div>
+
+                            <div className="mt-4 text-center text-sm">
+                                Don&apos;t have an account?{" "}
+                                <Link to="/sign-up" className="underline">
+                                    Sign up
+                                </Link>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
         </div>
     );
 };
