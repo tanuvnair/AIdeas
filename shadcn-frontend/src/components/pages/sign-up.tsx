@@ -25,6 +25,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent,
+} from "@/components/ui/card";
 
 export const SignUp = () => {
     const { isLoading } = useAuth();
@@ -118,8 +125,8 @@ export const SignUp = () => {
     };
 
     return (
-        <div className="min-h-screen">
-            <div className={`${error ? "mb-8" : ""}`}>
+        <div className="flex flex-col h-screen items-center justify-center gap-4">
+            <div>
                 <Button
                     variant="ghost"
                     className="absolute top-8 left-8"
@@ -130,82 +137,108 @@ export const SignUp = () => {
                 </Button>
             </div>
 
-            <div className="flex flex-col justify-center max-w-md mx-auto h-screen gap-8 p-8">
-                <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                    Create your new account
-                </h1>
-                {error && (
-                    <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{error.message}</AlertDescription>
-                    </Alert>
-                )}
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="flex flex-col gap-8"
-                    >
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type="email" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+            {error && (
+                <Alert variant="destructive" className="max-w-sm w-full">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error.message}</AlertDescription>
+                </Alert>
+            )}
 
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+            <Card className="mx-auto max-w-sm w-full">
+                <CardHeader>
+                    <CardTitle className="text-2xl">
+                        Create your new account
+                    </CardTitle>
 
-                        <FormField
-                            control={form.control}
-                            name="confirmPassword"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <CardDescription>
+                        Enter your email below to sign up
+                    </CardDescription>
+                </CardHeader>
 
-                        <Link
-                            className="text-primary underline-offset-4 hover:underline"
-                            to={"/sign-in"}
-                        >
-                            Already have an account?
-                        </Link>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                            <div className="grid gap-4">
+                                <div className="grid gap-2">
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="email"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
 
-                        <Button type="submit">
-                            Sign Up
-                            {isLoading ? (
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-background"></div>
-                            ) : (
-                                ""
-                            )}
-                        </Button>
-                    </form>
-                </Form>
-            </div>
+                                <div className="grid gap-2">
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Password</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="password"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <FormField
+                                        control={form.control}
+                                        name="confirmPassword"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Confirm Password
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="password"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <Button type="submit">
+                                    Sign Up
+                                    {isLoading ? (
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-background"></div>
+                                    ) : (
+                                        ""
+                                    )}
+                                </Button>
+                            </div>
+
+                            <div className="mt-4 text-center text-sm">
+                                Already have an account?{" "}
+                                <Link to="/login" className="underline">
+                                    Log In
+                                </Link>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
 
             <Dialog
                 open={successDialog}
@@ -213,10 +246,9 @@ export const SignUp = () => {
             >
                 <DialogContent>
                     <DialogHeader className="gap-4">
-                        <DialogTitle>Your account was created</DialogTitle>
-                        <Button onClick={() => navigate("/sign-in")}>
-                            Done
-                        </Button>
+                        <DialogTitle>Your account was created.</DialogTitle>
+
+                        <Button onClick={() => navigate("/login")}>Done</Button>
                     </DialogHeader>
                 </DialogContent>
             </Dialog>

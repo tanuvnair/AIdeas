@@ -89,8 +89,6 @@ export const Login = () => {
                     <CardDescription>
                         Enter your email below to login to your account
                     </CardDescription>
-
-                    <div></div>
                 </CardHeader>
 
                 <CardContent>
@@ -115,6 +113,7 @@ export const Login = () => {
                                         )}
                                     />
                                 </div>
+
                                 <div className="grid gap-2">
                                     <FormField
                                         control={loginForm.control}

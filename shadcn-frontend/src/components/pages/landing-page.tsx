@@ -95,7 +95,7 @@ export const LandingPage = () => {
                     <Button
                         variant="ghost"
                         className="hidden lg:block"
-                        onClick={() => navigate("/sign-in")}
+                        onClick={() => navigate("/login")}
                     >
                         Log In
                     </Button>
@@ -124,7 +124,7 @@ export const LandingPage = () => {
                         <Button
                             variant="outline"
                             className="p-6"
-                            onClick={() => navigate("/sign-in")}
+                            onClick={() => navigate("/login")}
                         >
                             Already have an account?
                         </Button>
