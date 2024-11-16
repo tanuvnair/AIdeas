@@ -1,21 +1,29 @@
 import * as React from "react";
 
 import { NavUser } from "@/components/nav-user";
+import { Plus } from "lucide-react";
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
     SidebarRail,
+    SidebarMenuAction,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
-
 export type User = {
     id: string;
     email: string;
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+    onCreateNote,
+    ...props
+}: React.ComponentProps<typeof Sidebar>) {
     const { user } = useAuth();
 
     const [userData, setUserData] = useState({
@@ -38,7 +46,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <NavUser user={userData} />
             </SidebarHeader>
             <SidebarContent></SidebarContent>
-
+            <SidebarFooter>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton onClick={onCreateNote}>
+                            <Plus />
+                            <span>New note</span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarFooter>
             <SidebarRail />
         </Sidebar>
     );
