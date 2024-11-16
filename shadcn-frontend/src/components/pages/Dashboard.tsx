@@ -46,11 +46,13 @@ interface Note {
 
 export const Dashboard = () => {
     const token = localStorage.getItem("token");
-    const { theme, setTheme } = useTheme();
-    const [noteTitle, setNoteTitle] = useState("");
     const { toast } = useToast();
+    const { theme, setTheme } = useTheme();
     const [notes, setNotes] = useState<Note[]>([]);
+    const [noteTitle, setNoteTitle] = useState("");
+    const [currentNoteData, setCurrentNoteData] = useState<Note>();
     const [noteCreationDialog, setNoteCreationDialog] = useState(false);
+    const [noteRenameDialog, setNoteRenameDialog] = useState(false);
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -112,7 +114,8 @@ export const Dashboard = () => {
             )
             .then(() => {
                 toast({
-                    title: "Note successfully created",
+                    title: "Note created",
+                    description: `The note "${noteTitle}" has been created successfully.`,
                 });
             })
             .catch((error) => {
@@ -131,7 +134,93 @@ export const Dashboard = () => {
 
                 toast({
                     variant: "destructive",
-                    title: errorMessage,
+                    title: "Something went wrong!",
+                    description: `${errorMessage}`,
+                });
+            });
+    };
+
+    const handleRenameNoteButton = (note: Note) => {
+        setNoteRenameDialog(true);
+        setCurrentNoteData(note);
+    };
+
+    const handleRenameNote = async (
+        currentNoteData: Note,
+        editedNoteTitle: string
+    ) => {
+        axios
+            .put(
+                `${import.meta.env.VITE_API_URL}/note/${currentNoteData._id}`,
+                { noteTitle: editedNoteTitle },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+            .then(() => {
+                toast({
+                    title: "Note renamed",
+                    description: `The note "${currentNoteData.noteTitle}" has been renamed to "${editedNoteTitle}" successfully.`,
+                });
+            })
+            .catch((error) => {
+                let errorMessage = "An error occurred.";
+
+                if (error.response) {
+                    errorMessage =
+                        error.response.data.message ||
+                        `Error: ${error.response.status}`;
+                } else if (error.request) {
+                    errorMessage =
+                        "No response from the server. Please try again later.";
+                } else {
+                    errorMessage = error.message;
+                }
+
+                toast({
+                    variant: "destructive",
+                    title: "Something went wrong!",
+                    description: `${errorMessage}`,
+                });
+            });
+    };
+
+    const handleDeleteNote = async (note: Note) => {
+        console.log(note);
+        axios
+            .delete(`${import.meta.env.VITE_API_URL}/note/${note._id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(() => {
+                toast({
+                    title: "Note deleted",
+                    description: `The note "${note.noteTitle}" has been deleted successfully.`,
+                });
+            })
+            .catch((error) => {
+                let errorMessage = "An error occurred.";
+
+                if (error.response) {
+                    errorMessage =
+                        error.response.data.message ||
+                        `Error: ${error.response.status}`;
+                } else if (error.request) {
+                    errorMessage =
+                        "No response from the server. Please try again later.";
+                } else {
+                    errorMessage = error.message;
+                }
+
+                toast({
+                    variant: "destructive",
+                    title: "Something went wrong!",
+                    description: `${errorMessage}`,
                 });
             });
     };
@@ -172,8 +261,8 @@ export const Dashboard = () => {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4">
                     <div className="grid auto-rows-min gap-4 md:grid-cols-5">
-                        {notes.map((note, i) => (
-                            <ContextMenu key={i}>
+                        {notes.map((note, index) => (
+                            <ContextMenu key={index}>
                                 <Card>
                                     <ContextMenuTrigger>
                                         <CardHeader>
@@ -181,20 +270,26 @@ export const Dashboard = () => {
                                                 {note.noteTitle}
                                             </CardTitle>
                                         </CardHeader>
-                                        <CardContent className="flex-1"></CardContent>
+                                        <CardContent></CardContent>
                                     </ContextMenuTrigger>
-
-                                    <ContextMenuContent>
-                                        <ContextMenuItem>
-                                            <FiEdit className="mr-2 text-lg" />
-                                            Rename Note
-                                        </ContextMenuItem>
-                                        <ContextMenuItem>
-                                            <FiTrash2 className="mr-2 text-lg" />
-                                            Delete Note
-                                        </ContextMenuItem>
-                                    </ContextMenuContent>
                                 </Card>
+
+                                <ContextMenuContent>
+                                    <ContextMenuItem
+                                        onClick={() =>
+                                            handleRenameNoteButton(note)
+                                        }
+                                    >
+                                        <FiEdit className="mr-2 text-lg" />
+                                        Rename Note
+                                    </ContextMenuItem>
+                                    <ContextMenuItem
+                                        onClick={() => handleDeleteNote(note)}
+                                    >
+                                        <FiTrash2 className="mr-2 text-lg" />
+                                        Delete Note
+                                    </ContextMenuItem>
+                                </ContextMenuContent>
                             </ContextMenu>
                         ))}
                     </div>
@@ -228,6 +323,47 @@ export const Dashboard = () => {
                                         onClick={handleCreateNote}
                                     >
                                         Create Note
+                                    </Button>
+                                </DialogClose>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    <Dialog
+                        open={noteRenameDialog}
+                        onOpenChange={() => setNoteRenameDialog(false)}
+                    >
+                        <DialogContent className="sm:max-w-md">
+                            <DialogHeader>
+                                <DialogTitle>Rename your note</DialogTitle>
+                                <DialogDescription>
+                                    Give it a unique and descriptive name
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="flex items-center space-x-2">
+                                <div className="grid flex-1 gap-2">
+                                    <Input
+                                        id="noteName"
+                                        placeholder="Your new note name"
+                                        onChange={(e) => {
+                                            setNoteTitle(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <DialogFooter className="sm:justify-end">
+                                <DialogClose asChild>
+                                    <Button
+                                        type="button"
+                                        variant={"default"}
+                                        onClick={() =>
+                                            handleRenameNote(
+                                                currentNoteData!,
+                                                noteTitle
+                                            )
+                                        }
+                                    >
+                                        Rename note
                                     </Button>
                                 </DialogClose>
                             </DialogFooter>
