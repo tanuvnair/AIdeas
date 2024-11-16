@@ -6,7 +6,6 @@ import {
     SidebarContent,
     SidebarHeader,
     SidebarRail,
-    SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
