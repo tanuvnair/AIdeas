@@ -14,6 +14,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "../theme-provider";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 
 export const Dashboard = () => {
     const { theme, setTheme } = useTheme();
@@ -30,7 +38,7 @@ export const Dashboard = () => {
                 <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4 justify-between">
                     {/* Left side - Sidebar Trigger and Breadcrumb */}
                     <div className="flex items-center gap-2">
-                        <SidebarTrigger className="-ml-1" />
+                        <SidebarTrigger />
                         <Separator
                             orientation="vertical"
                             className="mr-2 h-4"
@@ -38,9 +46,7 @@ export const Dashboard = () => {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>
-                                        October 2024
-                                    </BreadcrumbPage>
+                                    <BreadcrumbPage>Your Notes</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -61,11 +67,21 @@ export const Dashboard = () => {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4">
                     <div className="grid auto-rows-min gap-4 md:grid-cols-5">
-                        {Array.from({ length: 20 }).map((_, i) => (
-                            <div
-                                key={i}
-                                className="aspect-square rounded-xl bg-muted/50"
-                            />
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <Card key={i} className="aspect-square">
+                                <CardHeader>
+                                    <CardTitle>Card Title</CardTitle>
+                                    <CardDescription>
+                                        Card Description
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>Card Content</p>
+                                </CardContent>
+                                <CardFooter>
+                                    <p>Card Footer</p>
+                                </CardFooter>
+                            </Card>
                         ))}
                     </div>
                 </div>
