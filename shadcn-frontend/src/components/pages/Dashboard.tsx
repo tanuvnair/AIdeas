@@ -270,7 +270,12 @@ export const Dashboard = () => {
                                                 {note.noteTitle}
                                             </CardTitle>
                                         </CardHeader>
-                                        <CardContent></CardContent>
+                                        <CardContent className="aspect-square rounded-xl">
+                                            <canvas
+                                                id={`canvas-${note._id}`}
+                                                className="w-full h-full border-2"
+                                            ></canvas>
+                                        </CardContent>
                                     </ContextMenuTrigger>
                                 </Card>
 
