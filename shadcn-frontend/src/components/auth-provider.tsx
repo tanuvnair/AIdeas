@@ -73,8 +73,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
             try {
                 const response = await api.post("/auth/verify-token");
-                setUser(response.data.user);
-                setIsAuthenticated(true);
+
+                if (response.status === 200) {
+                    setUser(response.data.user);
+                    setIsAuthenticated(true);
+                } else {
+                    setUser(null);
+                    setIsAuthenticated(false);
+                }
             } catch (error) {
                 localStorage.removeItem("token");
                 handleError(error);
@@ -96,10 +102,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
                 password,
             });
 
-            const { token, user } = response.data;
+            const { token } = response.data;
             localStorage.setItem("token", token);
-            setUser(user);
             setIsAuthenticated(true);
+
+            const userData = await api.post("/auth/verify-token");
+            setUser(userData.data.user);
+
             navigate("/dashboard");
         } catch (error) {
             handleError(error);

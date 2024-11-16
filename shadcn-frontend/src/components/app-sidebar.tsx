@@ -17,6 +17,7 @@ export type User = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { user } = useAuth();
+
     const [userData, setUserData] = useState({
         name: "User",
         email: "user@mail.com",
