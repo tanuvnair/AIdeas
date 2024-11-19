@@ -13,7 +13,7 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { FiMoon, FiSun } from "react-icons/fi"; // Added FiPlus for "Add Note" button icon
+import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "../theme-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
@@ -46,6 +46,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useNavigate } from "react-router-dom";
 
 interface Note {
     _id: string;
@@ -65,6 +66,7 @@ export const Dashboard = () => {
     const [noteRenameDialog, setNoteRenameDialog] = useState(false);
     const [noteDeleteConfirmDialog, setNoteDeleteConfirmDialog] =
         useState(false);
+    const naviagate = useNavigate();
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -275,7 +277,7 @@ export const Dashboard = () => {
                             <ContextMenu key={index}>
                                 <Card
                                     onClick={() =>
-                                        console.log("CARD CLICKED", index)
+                                        naviagate("/note/" + note._id)
                                     }
                                     className="cursor-pointer"
                                 >
