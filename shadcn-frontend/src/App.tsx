@@ -12,6 +12,8 @@ import { LandingPage } from "@/components/pages/landing-page";
 import { Login } from "@/components/pages/login";
 import { SignUp } from "@/components/pages/sign-up";
 import { Dashboard } from "@/components/pages/dashboard";
+import { Note } from "@/components/pages/note";
+import { NotFound } from "@/components/pages/not-found";
 
 function App() {
     return (
@@ -21,6 +23,7 @@ function App() {
                     <Routes>
                         {/* Public routes */}
                         <Route path="/" element={<LandingPage />} />
+                        <Route path="*" element={<NotFound />} />
 
                         {/* Auth routes - redirects to dashboard if already logged it */}
                         <Route
@@ -38,6 +41,7 @@ function App() {
                         {/* Protected routes - require authentication */}
                         <Route element={<ProtectedRoute />}>
                             <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/note/:id" element={<Note />} />
                         </Route>
                     </Routes>
                 </ThemeProvider>
