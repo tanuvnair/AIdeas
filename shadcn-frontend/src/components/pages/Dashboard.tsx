@@ -47,6 +47,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
+import { Loading } from "./loading";
 
 interface Note {
     _id: string;
@@ -66,7 +67,7 @@ export const Dashboard = () => {
     const [noteRenameDialog, setNoteRenameDialog] = useState(false);
     const [noteDeleteConfirmDialog, setNoteDeleteConfirmDialog] =
         useState(false);
-    const naviagate = useNavigate();
+    const navigate = useNavigate();
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -277,7 +278,7 @@ export const Dashboard = () => {
                             <ContextMenu key={index}>
                                 <Card
                                     onClick={() =>
-                                        naviagate("/note/" + note._id)
+                                        navigate("/note/" + note._id)
                                     }
                                     className="cursor-pointer"
                                 >

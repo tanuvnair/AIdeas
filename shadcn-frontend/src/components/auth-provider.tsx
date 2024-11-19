@@ -43,11 +43,11 @@ api.interceptors.request.use((config) => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
+    const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
 
     const clearError = () => setError(null);
 
@@ -108,8 +108,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
             const userData = await api.post("/auth/verify-token");
             setUser(userData.data.user);
-
-            navigate("/dashboard");
         } catch (error) {
             handleError(error);
             throw error; // Re-throw to handle in the UI

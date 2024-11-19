@@ -41,7 +41,7 @@ function App() {
                         {/* Protected routes - require authentication */}
                         <Route element={<ProtectedRoute />}>
                             <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/note/:id" element={<Note />} />
+                            <Route path="note/:id" element={<Note />} />
                         </Route>
                     </Routes>
                 </ThemeProvider>

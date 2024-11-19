@@ -6,6 +6,8 @@ import { ArrowUp } from "lucide-react";
 import { useTheme } from "../theme-provider";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Loading } from "./loading";
+import { Progress } from "../ui/progress";
 
 export const LandingPage = () => {
     const { theme, setTheme } = useTheme();
