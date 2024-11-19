@@ -2,9 +2,10 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Brush, Eraser } from "lucide-react";
 import { FiSun, FiMoon } from "react-icons/fi";
 import { useTheme } from "@/components/theme-provider";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface Note {
     _id: string;
@@ -97,8 +98,21 @@ export const Note = () => {
                         className="w-full h-full max-h-full max-w-full border"
                     ></canvas>
                 </div>
-                <div className="w-[10%] p-8 border-l">
-                    <p>TOOLS</p>
+                <div>
+                    <ToggleGroup
+                        type="single"
+                        className="flex flex-col gap-2 w-sm p-4 "
+                    >
+                        <ToggleGroupItem value="brush" className="rounded-full">
+                            <Brush size={24} />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                            value="eraser"
+                            className="rounded-full"
+                        >
+                            <Eraser size={24} />
+                        </ToggleGroupItem>
+                    </ToggleGroup>
                 </div>
             </main>
             <footer className="p-4 border-t text-sm text-center">
