@@ -36,6 +36,17 @@ import {
     ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Note {
     _id: string;
@@ -53,6 +64,8 @@ export const Dashboard = () => {
     const [currentNoteData, setCurrentNoteData] = useState<Note>();
     const [noteCreationDialog, setNoteCreationDialog] = useState(false);
     const [noteRenameDialog, setNoteRenameDialog] = useState(false);
+    const [noteDeleteConfirmDialog, setNoteDeleteConfirmDialog] =
+        useState(false);
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -97,7 +110,6 @@ export const Dashboard = () => {
     };
 
     const handleCreateNote = async () => {
-        console.log("Creating note....");
         await axios
             .post(
                 `${import.meta.env.VITE_API_URL}/note/`,
@@ -189,7 +201,6 @@ export const Dashboard = () => {
     };
 
     const handleDeleteNote = async (note: Note) => {
-        console.log(note);
         axios
             .delete(`${import.meta.env.VITE_API_URL}/note/${note._id}`, {
                 headers: {
@@ -263,10 +274,15 @@ export const Dashboard = () => {
                     <div className="grid auto-rows-min gap-4 md:grid-cols-5">
                         {notes.map((note, index) => (
                             <ContextMenu key={index}>
-                                <Card>
+                                <Card
+                                    onClick={() =>
+                                        console.log("CARD CLICKED", index)
+                                    }
+                                    className="cursor-pointer"
+                                >
                                     <ContextMenuTrigger>
                                         <CardHeader>
-                                            <CardTitle>
+                                            <CardTitle className="select-none">
                                                 {note.noteTitle}
                                             </CardTitle>
                                         </CardHeader>
@@ -289,7 +305,10 @@ export const Dashboard = () => {
                                         Rename Note
                                     </ContextMenuItem>
                                     <ContextMenuItem
-                                        onClick={() => handleDeleteNote(note)}
+                                        onClick={() => {
+                                            setNoteDeleteConfirmDialog(true);
+                                            setCurrentNoteData(note);
+                                        }}
                                     >
                                         <FiTrash2 className="mr-2 text-lg" />
                                         Delete Note
@@ -298,6 +317,7 @@ export const Dashboard = () => {
                             </ContextMenu>
                         ))}
                     </div>
+
                     <Dialog
                         open={noteCreationDialog}
                         onOpenChange={() => setNoteCreationDialog(false)}
@@ -374,6 +394,33 @@ export const Dashboard = () => {
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
+
+                    <AlertDialog
+                        open={noteDeleteConfirmDialog}
+                        onOpenChange={() => setNoteDeleteConfirmDialog(false)}
+                    >
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently delete your note.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={() =>
+                                        handleDeleteNote(currentNoteData!)
+                                    }
+                                >
+                                    Continue
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
                 <Toaster />
             </SidebarInset>
