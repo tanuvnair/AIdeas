@@ -11,7 +11,6 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarRail,
-    SidebarMenuAction,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";

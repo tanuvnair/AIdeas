@@ -77,7 +77,6 @@ export const LandingPage = () => {
 
     return (
         <>
-            {/* Hero Section */}
             <section className="flex flex-col lg:flex-row justify-center items-center h-screen gap-8 p-4 lg:p-16 relative">
                 <div className="absolute top-8 right-8 flex items-center gap-4">
                     <Button
@@ -140,7 +139,6 @@ export const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Key Features and Testimonials */}
             <hr className="w-1/2 mx-auto my-8" />
             <section className="flex flex-col justify-around px-8 lg:px-64 py-16 lg:py-32 gap-32">
                 <div>
@@ -184,7 +182,6 @@ export const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Scroll to top button */}
             <Button
                 variant="outline"
                 className={`fixed bottom-8 right-8 px-6 py-8 rounded-full transition-opacity duration-300 ${

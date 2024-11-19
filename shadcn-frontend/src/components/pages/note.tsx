@@ -76,7 +76,6 @@ export const Note = () => {
                         </p>
                     </div>
                 </div>
-                {/* Theme Toggle Button */}
                 <Button
                     onClick={toggleTheme}
                     className="p-3 rounded-full flex items-center justify-center"

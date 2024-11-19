@@ -242,7 +242,6 @@ export const Dashboard = () => {
             <AppSidebar variant="inset" onCreateNote={handleCreateNoteButton} />
             <SidebarInset>
                 <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4 justify-between">
-                    {/* Left side - Sidebar Trigger and Breadcrumb */}
                     <div className="flex items-center gap-2">
                         <SidebarTrigger />
                         <Separator
@@ -258,7 +257,6 @@ export const Dashboard = () => {
                         </Breadcrumb>
                     </div>
 
-                    {/* Right side - Theme toggle button */}
                     <Button
                         onClick={toggleTheme}
                         className="p-3 rounded-full flex items-center justify-center"
