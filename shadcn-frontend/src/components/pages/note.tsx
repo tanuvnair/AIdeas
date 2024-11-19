@@ -1,6 +1,10 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { FiSun, FiMoon } from "react-icons/fi";
+import { useTheme } from "@/components/theme-provider";
 
 interface Note {
     _id: string;
@@ -10,10 +14,12 @@ interface Note {
 }
 
 export const Note = () => {
+    const { theme, setTheme } = useTheme();
     const token = localStorage.getItem("token");
     const { id } = useParams();
     const [note, setNote] = useState<Note>();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const navigate = useNavigate();
 
     const fetchNote = async () => {
         try {
@@ -42,30 +48,59 @@ export const Note = () => {
         if (canvas) {
             const ctx = canvas.getContext("2d");
             if (ctx) {
-                ctx.fillRect(0, 0, canvas.width, canvas.height); // Placeholder rectangle
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.font = "16px Arial";
-                ctx.fillText("Canvas Area", 10, 20); // Placeholder text
+                ctx.fillText("Canvas Area", 10, 20);
             }
         }
     }, []);
 
+    const toggleTheme = () => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+    };
+
     return (
-        <div className="flex flex-col h-screen">
-            <header className="p-4 border-b">
-                <h1 className="text-2xl font-bold">
-                    {note?.noteTitle || "Loading..."}
-                </h1>
-                <p className="text-sm">
-                    Created at: {note?.createdAt || "Unknown"}
-                </p>
+        <div className="flex flex-col h-screen overflow-hidden">
+            <header className="p-4 border-b flex justify-between items-center">
+                <div className="flex items-center space-x-4">
+                    <Button onClick={() => navigate(-1)} variant={"outline"}>
+                        <ArrowLeft />
+                    </Button>
+                    <div>
+                        <h1 className="text-2xl font-bold">
+                            {note?.noteTitle || "Loading..."}
+                        </h1>
+                        <p className="text-sm">
+                            Created at: {note?.createdAt || "Unknown"}
+                        </p>
+                    </div>
+                </div>
+                {/* Theme Toggle Button */}
+                <Button
+                    onClick={toggleTheme}
+                    className="p-3 rounded-full flex items-center justify-center"
+                    variant={"outline"}
+                >
+                    {theme === "dark" ? (
+                        <FiSun size={24} />
+                    ) : (
+                        <FiMoon size={24} />
+                    )}
+                </Button>
             </header>
-            <main className="flex-grow flex items-center justify-center">
-                <canvas
-                    ref={canvasRef}
-                    width={800}
-                    height={600}
-                    className="w-full h-full max-w-4xl max-h-screen border"
-                ></canvas>
+            <main className="flex flex-grow overflow-hidden">
+                <div className="flex-grow overflow-hidden">
+                    <canvas
+                        ref={canvasRef}
+                        width={800}
+                        height={600}
+                        className="w-full h-full max-h-full max-w-full border"
+                    ></canvas>
+                </div>
+                <div className="w-[10%] p-8 border-l">
+                    <p>TOOLS</p>
+                </div>
             </main>
             <footer className="p-4 border-t text-sm text-center">
                 {note

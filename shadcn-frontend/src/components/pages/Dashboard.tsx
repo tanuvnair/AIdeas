@@ -47,7 +47,6 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
-import { Loading } from "./loading";
 
 interface Note {
     _id: string;
