@@ -102,7 +102,7 @@ export const LandingPage = () => {
 
                 <div className="flex flex-col p-8 gap-6 max-w-2xl lg:max-w-3xl">
                     <div className="flex flex-col gap-4">
-                        <h1 className="scroll-m-20 text-4xl lg:text-6xl font-extrabold tracking-tight lg:text-left">
+                        <h1 className="dark:bg-gradientdark bg-gradientlight !bg-clip-text text-transparent !bg-cover !bg-center scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                             AIdeas
                         </h1>
                         <p className="text-lg text-muted-foreground lg:text-left">
@@ -114,7 +114,7 @@ export const LandingPage = () => {
                     <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
                         <Button
                             variant="default"
-                            className="p-6"
+                            className="p-6 "
                             onClick={() => navigate("/sign-up")}
                         >
                             Get started
