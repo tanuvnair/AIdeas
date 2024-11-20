@@ -44,17 +44,33 @@ export const Note = () => {
         fetchNote();
     }, []);
 
-    useEffect(() => {
+    const renderCanvas = () => {
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext("2d");
             if (ctx) {
+                const currentImageData = ctx.getImageData(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                ctx.fillStyle = theme === "dark" ? "#333" : "#fff";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.putImageData(currentImageData, 0, 0);
+
                 ctx.font = "16px Arial";
+                ctx.fillStyle = theme === "dark" ? "#fff" : "#000";
                 ctx.fillText("Canvas Area", 10, 20);
             }
         }
-    }, []);
+    };
+
+    useEffect(() => {
+        renderCanvas();
+    }, [theme]);
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -101,7 +117,7 @@ export const Note = () => {
                 <div>
                     <ToggleGroup
                         type="single"
-                        className="flex flex-col gap-2 w-sm p-4 "
+                        className="flex flex-col gap-2 w-sm p-4"
                     >
                         <ToggleGroupItem value="brush" className="rounded-full">
                             <Brush size={24} />
