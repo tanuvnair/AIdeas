@@ -20,7 +20,9 @@ export const Note = () => {
     const { id } = useParams();
     const [note, setNote] = useState<Note>();
     const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
+    const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const navigate = useNavigate();
 
     const fetchNote = async () => {
@@ -45,33 +47,82 @@ export const Note = () => {
         fetchNote();
     }, []);
 
-    const renderCanvas = () => {
+    const initializeCanvas = () => {
         const canvas = canvasRef.current;
         if (canvas) {
-            const ctx = canvas.getContext("2d");
-            if (ctx) {
-                const currentImageData = ctx.getImageData(
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height
-                );
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
 
-                ctx.fillStyle = theme === "dark" ? "#333" : "#fff";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const context = canvas.getContext("2d");
+            if (context) {
+                context.lineCap = "round";
+                context.strokeStyle = theme === "dark" ? "white" : "black";
+                context.lineWidth = currentTool === "brush" ? 5 : 20;
+                contextRef.current = context;
 
-                ctx.putImageData(currentImageData, 0, 0);
-
-                ctx.font = "16px Arial";
-                ctx.fillStyle = theme === "dark" ? "#fff" : "#000";
-                ctx.fillText("Canvas Area", 10, 20);
+                const savedImageData = localStorage.getItem(`noteCanvas-${id}`);
+                if (savedImageData) {
+                    const img = new Image();
+                    img.onload = () => {
+                        context.drawImage(img, 0, 0);
+                    };
+                    img.src = savedImageData;
+                }
             }
         }
     };
 
     useEffect(() => {
-        renderCanvas();
-    }, [theme]);
+        initializeCanvas();
+    }, [theme, currentTool, id]);
+
+    const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
+        const canvas = canvasRef.current;
+        const context = contextRef.current;
+        if (canvas && context) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            context.beginPath();
+            context.moveTo(x, y);
+            setIsDrawing(true);
+        }
+    };
+
+    const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
+        if (!isDrawing) return;
+
+        const canvas = canvasRef.current;
+        const context = contextRef.current;
+        if (canvas && context) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            context.lineTo(x, y);
+
+            if (currentTool === "eraser") {
+                context.globalCompositeOperation = "destination-out";
+            } else {
+                context.globalCompositeOperation = "source-over";
+            }
+
+            context.stroke();
+        }
+    };
+
+    const stopDrawing = () => {
+        const canvas = canvasRef.current;
+        const context = contextRef.current;
+        if (context && canvas) {
+            context.closePath();
+            setIsDrawing(false);
+
+            const imageData = canvas.toDataURL();
+            localStorage.setItem(`noteCanvas-${id}`, imageData);
+        }
+    };
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -114,9 +165,11 @@ export const Note = () => {
                 <div className="flex-grow overflow-hidden">
                     <canvas
                         ref={canvasRef}
-                        width={800}
-                        height={600}
-                        className="w-full h-full max-h-full max-w-full border"
+                        className="w-full h-full max-h-full max-w-full border bg-white dark:bg-black"
+                        onMouseDown={startDrawing}
+                        onMouseMove={draw}
+                        onMouseUp={stopDrawing}
+                        onMouseOut={stopDrawing}
                     ></canvas>
                 </div>
                 <div>
