@@ -30,7 +30,7 @@ export const Note = () => {
     const { id } = useParams();
     const [note, setNote] = useState<Note>();
     const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
-    const [currentColor, setCurrentColor] = useState("#000000");
+    const [currentColor, setCurrentColor] = useState("#AAAAAA");
     const [isDrawing, setIsDrawing] = useState(false);
     const [cursorPosition, setCursorPosition] = useState<CursorPosition>({
         x: 0,
@@ -42,6 +42,7 @@ export const Note = () => {
     const navigate = useNavigate();
 
     const colors = [
+        "#AAAAAA",
         "#000000",
         "#FFFFFF",
         "#FF0000",
