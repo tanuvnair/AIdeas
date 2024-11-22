@@ -19,6 +19,7 @@ export const Note = () => {
     const token = localStorage.getItem("token");
     const { id } = useParams();
     const [note, setNote] = useState<Note>();
+    const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const navigate = useNavigate();
 
@@ -77,6 +78,10 @@ export const Note = () => {
         setTheme(newTheme);
     };
 
+    const handleToolChange = (tool: "brush" | "eraser") => {
+        setCurrentTool(tool);
+    };
+
     return (
         <div className="flex flex-col h-screen overflow-hidden">
             <header className="p-4 border-b flex justify-between items-center">
@@ -118,13 +123,25 @@ export const Note = () => {
                     <ToggleGroup
                         type="single"
                         className="flex flex-col gap-2 w-sm p-4"
+                        value={currentTool}
+                        onValueChange={(value) =>
+                            value &&
+                            handleToolChange(value as "brush" | "eraser")
+                        }
                     >
-                        <ToggleGroupItem value="brush" className="rounded-full">
+                        <ToggleGroupItem
+                            value="brush"
+                            className={`rounded-full ${
+                                currentTool === "brush" ? "bg-gray-200" : ""
+                            }`}
+                        >
                             <Brush size={24} />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="eraser"
-                            className="rounded-full"
+                            className={`rounded-full ${
+                                currentTool === "eraser" ? "bg-gray-200" : ""
+                            }`}
                         >
                             <Eraser size={24} />
                         </ToggleGroupItem>
@@ -133,7 +150,7 @@ export const Note = () => {
             </main>
             <footer className="p-4 border-t text-sm text-center">
                 {note
-                    ? "Feel free to draw on the canvas above."
+                    ? `Feel free to draw on the canvas above.`
                     : "Fetching note data..."}
             </footer>
         </div>
