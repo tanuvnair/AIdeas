@@ -2,10 +2,15 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Brush, Eraser } from "lucide-react";
+import { ArrowLeft, Brush, Eraser, Palette } from "lucide-react";
 import { FiSun, FiMoon } from "react-icons/fi";
 import { useTheme } from "@/components/theme-provider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface Note {
     _id: string;
@@ -25,6 +30,7 @@ export const Note = () => {
     const { id } = useParams();
     const [note, setNote] = useState<Note>();
     const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
+    const [currentColor, setCurrentColor] = useState("#000000");
     const [isDrawing, setIsDrawing] = useState(false);
     const [cursorPosition, setCursorPosition] = useState<CursorPosition>({
         x: 0,
@@ -34,6 +40,22 @@ export const Note = () => {
     const overlayCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const navigate = useNavigate();
+
+    const colors = [
+        "#000000",
+        "#FFFFFF",
+        "#FF0000",
+        "#00FF00",
+        "#0000FF",
+        "#FFFF00",
+        "#FF00FF",
+        "#00FFFF",
+        "#FF8800",
+        "#88FF00",
+        "#0088FF",
+        "#8800FF",
+        "#FF0088",
+    ];
 
     const fetchNote = async () => {
         try {
@@ -71,8 +93,9 @@ export const Note = () => {
             const context = canvas.getContext("2d");
             if (context) {
                 context.lineCap = "round";
-                context.strokeStyle = "gray";
-                context.lineWidth = currentTool === "brush" ? 5 : 20;
+                context.strokeStyle =
+                    currentTool === "brush" ? currentColor : "white";
+                context.lineWidth = currentTool === "brush" ? 5 : 30;
                 contextRef.current = context;
 
                 const savedImageData = localStorage.getItem(`noteCanvas-${id}`);
@@ -89,7 +112,7 @@ export const Note = () => {
 
     useEffect(() => {
         initializeCanvas();
-    }, [theme, currentTool, id]);
+    }, [theme, currentTool, currentColor, id]);
 
     const drawEraserOutline = (x: number, y: number) => {
         const overlayCanvas = overlayCanvasRef.current;
@@ -135,6 +158,8 @@ export const Note = () => {
 
             context.beginPath();
             context.moveTo(x, y);
+            context.strokeStyle =
+                currentTool === "brush" ? currentColor : "white";
             setIsDrawing(true);
         }
     };
@@ -193,7 +218,7 @@ export const Note = () => {
         <div className="flex flex-col h-screen overflow-hidden">
             <header className="p-4 border-b flex justify-between items-center">
                 <div className="flex items-center space-x-4">
-                    <Button onClick={() => navigate(-1)} variant={"outline"}>
+                    <Button onClick={() => navigate(-1)} variant="outline">
                         <ArrowLeft />
                     </Button>
                     <div>
@@ -208,7 +233,7 @@ export const Note = () => {
                 <Button
                     onClick={toggleTheme}
                     className="p-3 rounded-full flex items-center justify-center"
-                    variant={"outline"}
+                    variant="outline"
                 >
                     {theme === "dark" ? (
                         <FiSun size={24} />
@@ -237,32 +262,77 @@ export const Note = () => {
                     />
                 </div>
                 <div>
-                    <ToggleGroup
-                        type="single"
-                        className="flex flex-col gap-2 w-sm p-4"
-                        value={currentTool}
-                        onValueChange={(value) =>
-                            value &&
-                            handleToolChange(value as "brush" | "eraser")
-                        }
-                    >
-                        <ToggleGroupItem
-                            value="brush"
-                            className={`rounded-full ${
-                                currentTool === "brush" ? "bg-gray-200" : ""
-                            }`}
+                    <div className="flex flex-col gap-4 p-4">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className={`p-0 rounded-full`}
+                                    style={{
+                                        backgroundColor: currentColor,
+                                    }}
+                                ></Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-64">
+                                <div className="grid grid-cols-5 gap-2">
+                                    {colors.map((color) => (
+                                        <button
+                                            key={color}
+                                            className={`w-8 h-8 rounded-full border-2 ${
+                                                color === currentColor
+                                                    ? "border-gray-400"
+                                                    : "border-transparent"
+                                            }`}
+                                            style={{
+                                                backgroundColor: color,
+                                            }}
+                                            onClick={() =>
+                                                setCurrentColor(color)
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                                <div className="flex items-center gap-2 mt-4">
+                                    <input
+                                        type="color"
+                                        value={currentColor}
+                                        onChange={(e) =>
+                                            setCurrentColor(e.target.value)
+                                        }
+                                        className="w-full"
+                                    />
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                        <ToggleGroup
+                            type="single"
+                            className="flex flex-col gap-2"
+                            value={currentTool}
+                            onValueChange={(value) =>
+                                value &&
+                                handleToolChange(value as "brush" | "eraser")
+                            }
                         >
-                            <Brush size={24} />
-                        </ToggleGroupItem>
-                        <ToggleGroupItem
-                            value="eraser"
-                            className={`rounded-full ${
-                                currentTool === "eraser" ? "bg-gray-200" : ""
-                            }`}
-                        >
-                            <Eraser size={24} />
-                        </ToggleGroupItem>
-                    </ToggleGroup>
+                            <ToggleGroupItem
+                                value="brush"
+                                className={`rounded-full ${
+                                    currentTool === "brush" ? "bg-gray-200" : ""
+                                }`}
+                            >
+                                <Brush size={24} />
+                            </ToggleGroupItem>
+                            <ToggleGroupItem
+                                value="eraser"
+                                className={`rounded-full ${
+                                    currentTool === "eraser"
+                                        ? "bg-gray-200"
+                                        : ""
+                                }`}
+                            >
+                                <Eraser size={24} />
+                            </ToggleGroupItem>
+                        </ToggleGroup>
+                    </div>
                 </div>
             </main>
             <footer className="p-4 border-t text-sm text-center">
