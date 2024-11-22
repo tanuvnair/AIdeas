@@ -14,6 +14,11 @@ interface Note {
     createdAt: string;
 }
 
+interface CursorPosition {
+    x: number;
+    y: number;
+}
+
 export const Note = () => {
     const { theme, setTheme } = useTheme();
     const token = localStorage.getItem("token");
@@ -21,7 +26,12 @@ export const Note = () => {
     const [note, setNote] = useState<Note>();
     const [currentTool, setCurrentTool] = useState<"brush" | "eraser">("brush");
     const [isDrawing, setIsDrawing] = useState(false);
+    const [cursorPosition, setCursorPosition] = useState<CursorPosition>({
+        x: 0,
+        y: 0,
+    });
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const overlayCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const navigate = useNavigate();
 
@@ -49,14 +59,19 @@ export const Note = () => {
 
     const initializeCanvas = () => {
         const canvas = canvasRef.current;
-        if (canvas) {
+        const overlayCanvas = overlayCanvasRef.current;
+
+        if (canvas && overlayCanvas) {
             canvas.width = canvas.clientWidth;
             canvas.height = canvas.clientHeight;
+
+            overlayCanvas.width = canvas.width;
+            overlayCanvas.height = canvas.height;
 
             const context = canvas.getContext("2d");
             if (context) {
                 context.lineCap = "round";
-                context.strokeStyle = theme === "dark" ? "white" : "black";
+                context.strokeStyle = "gray";
                 context.lineWidth = currentTool === "brush" ? 5 : 20;
                 contextRef.current = context;
 
@@ -75,6 +90,40 @@ export const Note = () => {
     useEffect(() => {
         initializeCanvas();
     }, [theme, currentTool, id]);
+
+    const drawEraserOutline = (x: number, y: number) => {
+        const overlayCanvas = overlayCanvasRef.current;
+        if (overlayCanvas) {
+            const ctx = overlayCanvas.getContext("2d");
+            if (ctx) {
+                ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+
+                if (currentTool === "eraser") {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 10, 0, Math.PI * 2);
+                    ctx.strokeStyle = theme === "dark" ? "white" : "black";
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+        }
+    };
+
+    const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            setCursorPosition({ x, y });
+            drawEraserOutline(x, y);
+        }
+
+        if (isDrawing) {
+            draw(event);
+        }
+    };
 
     const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
@@ -131,6 +180,13 @@ export const Note = () => {
 
     const handleToolChange = (tool: "brush" | "eraser") => {
         setCurrentTool(tool);
+        const overlayCanvas = overlayCanvasRef.current;
+        if (overlayCanvas) {
+            const ctx = overlayCanvas.getContext("2d");
+            if (ctx) {
+                ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+            }
+        }
     };
 
     return (
@@ -162,15 +218,23 @@ export const Note = () => {
                 </Button>
             </header>
             <main className="flex flex-grow overflow-hidden">
-                <div className="flex-grow overflow-hidden">
+                <div className="flex-grow overflow-hidden relative">
                     <canvas
                         ref={canvasRef}
-                        className="w-full h-full max-h-full max-w-full border bg-white dark:bg-black"
+                        className="w-full h-full max-h-full max-w-full border bg-white dark:bg-black absolute top-0 left-0"
                         onMouseDown={startDrawing}
-                        onMouseMove={draw}
+                        onMouseMove={handleMouseMove}
                         onMouseUp={stopDrawing}
                         onMouseOut={stopDrawing}
-                    ></canvas>
+                        style={{
+                            cursor:
+                                currentTool === "brush" ? "default" : "none",
+                        }}
+                    />
+                    <canvas
+                        ref={overlayCanvasRef}
+                        className="w-full h-full max-h-full max-w-full pointer-events-none absolute top-0 left-0"
+                    />
                 </div>
                 <div>
                     <ToggleGroup
